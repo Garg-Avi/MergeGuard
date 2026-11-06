@@ -1,0 +1,272 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+    /* MergeGuard Warm Ivory & Rich Violet Palette */
+    --mg-bg-canvas: #FAF9F5;
+    --mg-bg-card: #FFFFFF;
+    --mg-bg-subtle: #F4F3EE;
+    --mg-bg-elevated: #FFFFFF;
+    
+    --mg-border-subtlest: #F1EFE9;
+    --mg-border-subtle: #E8E6DF;
+    --mg-border-default: #DDD9CE;
+    --mg-border-strong: #CBD5E1;
+
+    --mg-text-primary: #111827;
+    --mg-text-secondary: #4B5563;
+    --mg-text-muted: #9CA3AF;
+
+    --mg-indigo: #4F46E5;
+    --mg-indigo-hover: #4338CA;
+    --mg-violet: #7C3AED;
+    --mg-cyan: #0891B2;
+    --mg-cyan-soft: #06B6D4;
+    
+    --mg-warning: #D97706;
+    --mg-danger: #E11D48;
+    --mg-success: #059669;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--mg-bg-canvas);
+    color: var(--mg-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Custom Scrollbar in Warm Alabaster */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF9F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8D4C8;
+  border-radius: 9999px;
+  border: 2px solid #FAF9F5;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B4AFA2;
+}
+
+/* Subtle Warm Mesh Pattern */
+.bg-warm-dots {
+  background-size: 24px 24px;
+  background-image: radial-gradient(circle, rgba(148, 163, 184, 0.22) 1px, transparent 1px);
+}
+
+.bg-mesh-glow {
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.08) 0px, transparent 55%),
+    radial-gradient(at 85% 10%, rgba(124, 58, 237, 0.07) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(6, 182, 212, 0.06) 0px, transparent 50%);
+}
+
+/* Premium Card Classes */
+.mg-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E6DF;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mg-card-interactive {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E6DF;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mg-card-interactive:hover {
+  border-color: #C7D2FE;
+  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.07);
+  transform: translateY(-2px);
+}
+
+/* Premium Buttons */
+.mg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+.mg-btn-primary:hover {
+  background: linear-gradient(135deg, #4338CA 0%, #6D28D9 100%);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  transform: translateY(-1px);
+}
+.mg-btn-primary:active {
+  transform: translateY(0);
+}
+.mg-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.mg-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #FFFFFF;
+  color: #374151;
+  border: 1px solid #D8D4C8;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.mg-btn-secondary:hover {
+  background-color: #F8F7F4;
+  color: #111827;
+  border-color: #B8B3A4;
+  transform: translateY(-1px);
+}
+.mg-btn-secondary:active {
+  transform: translateY(0);
+}
+.mg-btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mg-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #FFF1F2;
+  color: #E11D48;
+  border: 1px solid #FFE4E6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.mg-btn-danger:hover {
+  background-color: #FFE4E6;
+  border-color: #FDA4AF;
+}
+
+/* Premium Form Inputs */
+.mg-input {
+  width: 100%;
+  background-color: #FFFFFF;
+  border: 1px solid #DDD9CE;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.mg-input:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+.mg-input::placeholder {
+  color: #9CA3AF;
+}
+
+/* Skeleton Loading Pulse */
+.mg-skeleton {
+  animation: mg-shimmer 1.8s infinite linear;
+  background: linear-gradient(90deg, #F3F1EC 0%, #E8E5DC 50%, #F3F1EC 100%);
+  background-size: 200% 100%;
+  border-radius: 0.75rem;
+}
+
+@keyframes mg-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Smooth Entrance Keyframe */
+@keyframes mg-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: mg-fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* React Flow Styling for Light Theme */
+.react-flow__pane {
+  background: #FAF9F5 !important;
+}
+.react-flow__background {
+  background: #FAF9F5 !important;
+}
+.react-flow__controls {
+  background: #FFFFFF !important;
+  border: 1px solid #E8E6DF !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #E8E6DF !important;
+  fill: #64748B !important;
+}
+.react-flow__controls-button:hover {
+  background: #F8F7F4 !important;
+  fill: #4F46E5 !important;
+}
+.react-flow__edge-path {
+  stroke: #A5B4FC !important;
+  stroke-width: 2 !important;
+}
+
+/* Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
