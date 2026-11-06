@@ -1,0 +1,16 @@
+{
+  "name": "mergeguard-workspace",
+  "version": "1.0.0",
+  "description": "MergeGuard — Pull Request Trust Intelligence. Every PR. Under the Lens.",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview",
+    "lint": "npm --prefix frontend run lint",
+    "backend": "PYTHONPATH=backend ./backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload",
+    "test:backend": "PYTHONPATH=backend ./backend/venv/bin/pytest backend/tests/ -v"
+  },
+  "author": "Avi Garg",
+  "license": "Apache-2.0"
+}
