@@ -2,11 +2,13 @@ import re
 import hmac
 import hashlib
 import json
+import base64
 from datetime import datetime, timezone
 from typing import Tuple, Dict, Any, List, Optional
 import httpx
 from sqlalchemy.orm import Session
 from app.core.config import settings
+from app.core.secret_redactor import redact_secrets
 from app.models import Project, Contributor, GitHubPullRequest, GitHubCredential
 
 def parse_iso_datetime(dt_str: Optional[str]) -> Optional[datetime]:
@@ -612,6 +614,160 @@ class GitHubService:
         }
 
     @classmethod
+    def _sample_large_diff(cls, raw_diff: str, max_lines: int = 1200) -> Tuple[str, bool]:
+        """
+        Intelligently samples large unified git diffs:
+        - Drops binary chunks and vendor lockfiles (package-lock.json, poetry.lock, Cargo.lock, yarn.lock, .min.js).
+        - Prioritizes source code files and test files.
+        - Preserves file headers and meaningful logic hunks.
+        """
+        if not raw_diff:
+            return "", False
+
+        lines = raw_diff.splitlines()
+        if len(lines) <= max_lines:
+            return raw_diff, False
+
+        file_hunks = []
+        current_header = ""
+        current_lines = []
+        current_file = ""
+
+        noisy_exts = (".lock", ".min.js", ".min.css", ".map", ".svg", ".png", ".jpg", ".jpeg", ".ico", ".wasm", ".bin")
+
+        def is_noisy(fname: str) -> bool:
+            f = fname.lower()
+            return f.endswith(noisy_exts) or any(
+                lock in f for lock in ["package-lock.json", "yarn.lock", "cargo.lock", "poetry.lock", "pnpm-lock.yaml"]
+            )
+
+        for line in lines:
+            if line.startswith("diff --git "):
+                if current_file:
+                    file_hunks.append((current_file, current_header, current_lines))
+                parts = line.split(" ")
+                current_file = parts[-1].lstrip("b/") if len(parts) >= 4 else "file"
+                current_header = line
+                current_lines = []
+            else:
+                current_lines.append(line)
+
+        if current_file:
+            file_hunks.append((current_file, current_header, current_lines))
+
+        def hunk_priority(item):
+            fname = item[0].lower()
+            if any(k in fname for k in ["test", "spec"]):
+                return 0
+            if is_noisy(fname):
+                return 3
+            if any(fname.endswith(ext) for ext in [".py", ".ts", ".tsx", ".js", ".jsx", ".go", ".rs", ".java", ".c", ".cpp", ".rb"]):
+                return 1
+            return 2
+
+        file_hunks.sort(key=hunk_priority)
+
+        reconstructed = []
+        lines_count = 0
+        is_truncated = False
+
+        for fname, header, hlines in file_hunks:
+            if is_noisy(fname):
+                reconstructed.append(f"{header}\n[Binary / Generated Lockfile Omitted ({len(hlines)} lines)]")
+                continue
+
+            if lines_count + len(hlines) > max_lines:
+                remaining = max(20, max_lines - lines_count)
+                reconstructed.append(header)
+                reconstructed.extend(hlines[:remaining])
+                reconstructed.append(f"... [Diff truncated: {len(hlines) - remaining} additional lines omitted for file {fname}]")
+                is_truncated = True
+                break
+            else:
+                reconstructed.append(header)
+                reconstructed.extend(hlines)
+                lines_count += len(hlines)
+
+        return "\n".join(reconstructed), is_truncated
+
+    @classmethod
+    def fetch_pr_complete_diff(
+        cls,
+        owner: str,
+        repo: str,
+        pr_number: int,
+        token: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Retrieves the complete git unified diff directly from GitHub REST API
+        using header 'Accept: application/vnd.github.v3.diff'.
+        Redacts detected secrets before returning.
+        """
+        headers = cls.get_request_headers(token)
+        headers["Accept"] = "application/vnd.github.v3.diff"
+        url = f"{settings.GITHUB_API_BASE}/repos/{owner}/{repo}/pulls/{pr_number}"
+
+        try:
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.get(url, headers=headers)
+                raw_diff = getattr(resp, "text", "")
+                if resp.status_code == 200 and isinstance(raw_diff, str) and ("diff --git" in raw_diff or "@@" in raw_diff):
+                    sanitized, was_redacted = redact_secrets(raw_diff)
+                    sampled_diff, is_truncated = cls._sample_large_diff(sanitized, max_lines=1200)
+                    return {
+                        "diff": sampled_diff,
+                        "raw_length": len(raw_diff),
+                        "total_lines": len(raw_diff.splitlines()),
+                        "is_truncated": is_truncated,
+                        "was_redacted": was_redacted,
+                        "status": "SUCCESS"
+                    }
+                elif resp.status_code in (403, 429):
+                    return {"diff": "", "raw_length": 0, "total_lines": 0, "is_truncated": False, "was_redacted": False, "status": "RATE_LIMITED"}
+                elif resp.status_code == 404:
+                    return {"diff": "", "raw_length": 0, "total_lines": 0, "is_truncated": False, "was_redacted": False, "status": "NOT_FOUND"}
+        except Exception:
+            pass
+
+        return {"diff": "", "raw_length": 0, "total_lines": 0, "is_truncated": False, "was_redacted": False, "status": "ERROR"}
+
+    @classmethod
+    def fetch_file_content(
+        cls,
+        owner: str,
+        repo: str,
+        file_path: str,
+        ref: Optional[str] = None,
+        token: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Fetches surrounding source code context for a changed file via GitHub Contents API.
+        Redacts detected secrets before returning.
+        """
+        headers = cls.get_request_headers(token)
+        url = f"{settings.GITHUB_API_BASE}/repos/{owner}/{repo}/contents/{file_path}"
+        params = {"ref": ref} if ref else {}
+
+        try:
+            with httpx.Client(timeout=8.0) as client:
+                resp = client.get(url, params=params, headers=headers)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    content_b64 = data.get("content", "")
+                    if content_b64:
+                        decoded = base64.b64decode(content_b64).decode("utf-8", errors="replace")
+                        sanitized, was_redacted = redact_secrets(decoded)
+                        return {
+                            "content": sanitized[:12000],
+                            "was_redacted": was_redacted,
+                            "status": "SUCCESS"
+                        }
+        except Exception:
+            pass
+
+        return {"content": "", "was_redacted": False, "status": "UNAVAILABLE"}
+
+    @classmethod
     def fetch_pr_diff_and_files(
         cls,
         owner: str,
@@ -620,20 +776,31 @@ class GitHubService:
         token: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Retrieves changed files, additions, deletions, and representative code diff snippets.
+        Retrieves changed files, additions, deletions, full unified diff or smart sampled diffs,
+        and identifies test files and security-relevant files.
         """
         headers = cls.get_request_headers(token)
         url = f"{settings.GITHUB_API_BASE}/repos/{owner}/{repo}/pulls/{pr_number}/files"
 
+        file_summaries = []
+        total_adds = 0
+        total_dels = 0
+        test_files = []
+        was_redacted = False
+
+        # First attempt to fetch the complete unified diff
+        diff_res = cls.fetch_pr_complete_diff(owner, repo, pr_number, token=token)
+        unified_diff = diff_res.get("diff") or ""
+        is_truncated = diff_res.get("is_truncated", False)
+        if diff_res.get("was_redacted"):
+            was_redacted = True
+
         try:
             with httpx.Client(timeout=8.0) as client:
-                resp = client.get(url, params={"per_page": 10}, headers=headers)
+                resp = client.get(url, params={"per_page": 30}, headers=headers)
                 if resp.status_code == 200:
                     files = resp.json()
-                    file_summaries = []
-                    diff_parts = []
-                    total_adds = 0
-                    total_dels = 0
+                    fallback_diff_parts = []
 
                     for f in files:
                         fname = f.get("filename") or ""
@@ -642,30 +809,48 @@ class GitHubService:
                         dels = f.get("deletions", 0)
                         total_adds += adds
                         total_dels += dels
+
+                        is_test = bool(re.search(r"(test|spec|__tests__|tests/)", fname, re.IGNORECASE))
+                        if is_test:
+                            test_files.append(fname)
+
+                        raw_patch = f.get("patch") or ""
+                        clean_patch, p_redacted = redact_secrets(raw_patch)
+                        if p_redacted:
+                            was_redacted = True
+
                         file_summaries.append({
                             "filename": fname,
                             "status": status,
                             "additions": adds,
-                            "deletions": dels
+                            "deletions": dels,
+                            "is_test": is_test,
+                            "patch_snippet": clean_patch[:800] if clean_patch else ""
                         })
 
-                        raw_patch = f.get("patch") or ""
-                        if raw_patch and len(diff_parts) < 3:
-                            # Trim patch to prevent token bloat
-                            trimmed = raw_patch[:600]
-                            diff_parts.append(f"--- a/{fname}\n+++ b/{fname}\n{trimmed}")
+                        if clean_patch and len(fallback_diff_parts) < 8:
+                            fallback_diff_parts.append(f"--- a/{fname}\n+++ b/{fname}\n{clean_patch[:1200]}")
 
-                    diff_snippet = "\n\n".join(diff_parts)
-                    return {
-                        "files": file_summaries,
-                        "diff_snippet": diff_snippet,
-                        "additions": total_adds,
-                        "deletions": total_dels
-                    }
+                    if not unified_diff and fallback_diff_parts:
+                        unified_diff = "\n\n".join(fallback_diff_parts)
+
         except Exception:
             pass
 
-        return {"files": [], "diff_snippet": "", "additions": 0, "deletions": 0}
+        coverage_status = "FULL_CODE_ANALYSIS" if (unified_diff and not is_truncated) else (
+            "PARTIAL_ANALYSIS" if unified_diff else "INSUFFICIENT_EVIDENCE"
+        )
+
+        return {
+            "files": file_summaries,
+            "diff_snippet": unified_diff,
+            "additions": total_adds,
+            "deletions": total_dels,
+            "test_files": test_files,
+            "is_truncated": is_truncated,
+            "was_redacted": was_redacted,
+            "coverage_status": coverage_status
+        }
 
     @classmethod
     def fetch_pr_reviews_and_discussions(
