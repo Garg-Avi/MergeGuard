@@ -1,0 +1,51 @@
+# Environment & Secret files
+.env
+.env.*
+*.env
+backend/.env
+frontend/.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/.venv/
+.venv/
+env/
+venv/
+backend/venv/
+.pytest_cache/
+*.log
+
+# Databases & Local Data
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+dist/
+build/
+frontend/dist/
+.vercel/
+frontend/.vercel/
+
+# Operating System & IDEs
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
