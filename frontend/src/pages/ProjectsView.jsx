@@ -1172,6 +1172,28 @@ export default function ProjectsView() {
                       </p>
                     </div>
 
+                    {Array.isArray(authorAiData.current_pr_assessment?.code_issues) && authorAiData.current_pr_assessment.code_issues.length > 0 && (
+                      <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                        <span className="font-bold text-slate-800 text-[10px] uppercase block">
+                          Line-by-Line Code Findings ({authorAiData.current_pr_assessment.code_issues.length}):
+                        </span>
+                        <div className="space-y-1.5">
+                          {authorAiData.current_pr_assessment.code_issues.map((iss, iIdx) => (
+                            <div key={iIdx} className="p-2 rounded bg-slate-50 border border-slate-200 text-[11px] space-y-1">
+                              <div className="flex items-center justify-between gap-1 flex-wrap font-mono">
+                                <span className="font-bold text-slate-800">{iss.file}{iss.line ? `:${iss.line}` : ''}</span>
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-white border border-slate-200 font-bold">{iss.severity}</span>
+                              </div>
+                              <p className="text-slate-600">{iss.description}</p>
+                              {iss.suggested_fix && (
+                                <p className="text-[10px] text-indigo-700 font-mono">Fix: {iss.suggested_fix}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {Array.isArray(authorAiData.current_pr_assessment?.code_review_findings) && authorAiData.current_pr_assessment.code_review_findings.length > 0 && (
                       <div className="pt-1.5 border-t border-slate-100 space-y-1">
                         <span className="font-bold text-slate-800 text-[10px] uppercase block">Findings:</span>

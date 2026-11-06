@@ -29,6 +29,8 @@ import {
   MessageSquare,
   Layers,
   ShieldCheck,
+  Lock,
+  Bug,
 } from 'lucide-react';
 import { TRUST_STATUSES, getTrustStatusInfo } from '../utils/statusHelpers';
 
@@ -877,15 +879,21 @@ export default function ContributorsView() {
                                 </span>
                               </div>
                               <p className="text-xs text-slate-600 mt-0.5">
-                                Evaluated from historical pull requests across public GitHub repositories
+                                Evaluated from historical pull requests and real code diffs across public GitHub repositories
                               </p>
                             </div>
 
                             <div className="text-right shrink-0">
                               <span className="text-[10px] uppercase font-bold text-slate-400 block">Quality Rating</span>
-                              <span className="text-xl font-black text-slate-900 font-mono">
-                                {Math.round((evidenceInvestigation.background_assessment?.engineering_quality_rating ?? 0.5) * 100)}%
-                              </span>
+                              {evidenceInvestigation.background_assessment?.is_insufficient_evidence ? (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-300">
+                                  Neutral (No Diffs)
+                                </span>
+                              ) : (
+                                <span className="text-xl font-black text-slate-900 font-mono">
+                                  {Math.round((evidenceInvestigation.background_assessment?.engineering_quality_rating ?? 0.5) * 100)}%
+                                </span>
+                              )}
                             </div>
                           </div>
 
@@ -893,9 +901,9 @@ export default function ContributorsView() {
                           {evidenceInvestigation.background_assessment?.rubric_breakdown && (
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
                               <div className="p-2 rounded-lg bg-white border border-slate-200/80 text-xs">
-                                <span className="text-[10px] text-slate-400 block font-medium">Structure &amp; Arch</span>
+                                <span className="text-[10px] text-slate-400 block font-medium">Correctness</span>
                                 <span className="font-bold text-slate-800 font-mono text-[11px]">
-                                  {Math.round((evidenceInvestigation.background_assessment.rubric_breakdown.code_structure ?? 0.5) * 100)}%
+                                  {Math.round((evidenceInvestigation.background_assessment.rubric_breakdown.code_correctness ?? evidenceInvestigation.background_assessment.rubric_breakdown.code_structure ?? 0.5) * 100)}%
                                 </span>
                               </div>
                               <div className="p-2 rounded-lg bg-white border border-slate-200/80 text-xs">
@@ -905,15 +913,15 @@ export default function ContributorsView() {
                                 </span>
                               </div>
                               <div className="p-2 rounded-lg bg-white border border-slate-200/80 text-xs">
-                                <span className="text-[10px] text-slate-400 block font-medium">Test Coverage</span>
+                                <span className="text-[10px] text-slate-400 block font-medium">Test Discipline</span>
                                 <span className="font-bold text-slate-800 font-mono text-[11px]">
-                                  {Math.round((evidenceInvestigation.background_assessment.rubric_breakdown.test_coverage ?? 0.5) * 100)}%
+                                  {Math.round((evidenceInvestigation.background_assessment.rubric_breakdown.test_discipline ?? evidenceInvestigation.background_assessment.rubric_breakdown.test_coverage ?? 0.5) * 100)}%
                                 </span>
                               </div>
                               <div className="p-2 rounded-lg bg-white border border-slate-200/80 text-xs">
-                                <span className="text-[10px] text-slate-400 block font-medium">Collaboration</span>
+                                <span className="text-[10px] text-slate-400 block font-medium">Complexity</span>
                                 <span className="font-bold text-slate-800 font-mono text-[11px]">
-                                  {Math.round((evidenceInvestigation.background_assessment.rubric_breakdown.collaboration ?? 0.5) * 100)}%
+                                  {Math.round((evidenceInvestigation.background_assessment.rubric_breakdown.technical_complexity ?? 0.5) * 100)}%
                                 </span>
                               </div>
                             </div>
@@ -924,28 +932,30 @@ export default function ContributorsView() {
                             {evidenceInvestigation.background_assessment?.summary}
                           </p>
 
-                          {/* Consistency & Complexity */}
+                          {/* Consistency & Testing Habits */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-600 pt-1 border-t border-[#E8E6DF]">
                             <div>
-                              <span className="font-bold text-slate-800 block">Consistency Analysis:</span>
-                              <span>{evidenceInvestigation.background_assessment?.consistency_analysis}</span>
+                              <span className="font-bold text-slate-800 block">Historical Consistency:</span>
+                              <span>{evidenceInvestigation.background_assessment?.historical_consistency || evidenceInvestigation.background_assessment?.consistency_analysis}</span>
                             </div>
                             <div>
-                              <span className="font-bold text-slate-800 block">Complexity Assessment:</span>
-                              <span>{evidenceInvestigation.background_assessment?.complexity_assessment}</span>
+                              <span className="font-bold text-slate-800 block">Testing &amp; Quality Habits:</span>
+                              <span>{evidenceInvestigation.background_assessment?.testing_habits || evidenceInvestigation.background_assessment?.complexity_assessment}</span>
                             </div>
                           </div>
 
-                          {/* Positives & Concerns */}
+                          {/* Technical Strengths & Recurring Weaknesses */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#E8E6DF] text-xs">
-                            {/* Positive Signals */}
+                            {/* Strengths */}
                             <div className="space-y-1.5">
                               <span className="text-[11px] font-bold text-emerald-800 flex items-center gap-1">
                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                                <span>Positive Engineering Signals</span>
+                                <span>Observed Technical Strengths</span>
                               </span>
                               <ul className="space-y-1 text-slate-600 text-[11px]">
-                                {(evidenceInvestigation.background_assessment?.positive_engineering_signals || []).map((sig, idx) => (
+                                {((evidenceInvestigation.background_assessment?.technical_strengths?.length > 0)
+                                  ? evidenceInvestigation.background_assessment.technical_strengths
+                                  : (evidenceInvestigation.background_assessment?.positive_engineering_signals || [])).map((sig, idx) => (
                                   <li key={idx} className="flex items-start gap-1.5">
                                     <span className="text-emerald-500 font-bold shrink-0">&bull;</span>
                                     <span>{sig}</span>
@@ -954,14 +964,16 @@ export default function ContributorsView() {
                               </ul>
                             </div>
 
-                            {/* Potential Concerns */}
+                            {/* Weaknesses / Concerns */}
                             <div className="space-y-1.5">
                               <span className="text-[11px] font-bold text-amber-800 flex items-center gap-1">
                                 <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                                <span>Potential Technical Concerns</span>
+                                <span>Recurring Technical Concerns</span>
                               </span>
                               <ul className="space-y-1 text-slate-600 text-[11px]">
-                                {(evidenceInvestigation.background_assessment?.potential_technical_concerns || []).map((con, idx) => (
+                                {((evidenceInvestigation.background_assessment?.recurring_weaknesses?.length > 0)
+                                  ? evidenceInvestigation.background_assessment.recurring_weaknesses
+                                  : (evidenceInvestigation.background_assessment?.potential_technical_concerns || [])).map((con, idx) => (
                                   <li key={idx} className="flex items-start gap-1.5">
                                     <span className="text-amber-500 font-bold shrink-0">&bull;</span>
                                     <span>{con}</span>
@@ -972,13 +984,13 @@ export default function ContributorsView() {
                           </div>
                         </div>
 
-                        {/* CARD B: CURRENT PR ASSESSMENT */}
+                        {/* CARD B: CURRENT PR ASSESSMENT & LINE-BY-LINE REVIEW */}
                         <div className="p-4 rounded-xl bg-white border border-indigo-100 shadow-xs space-y-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">
-                                  Assessment B: Current PR Code Evaluation
+                                  Assessment B: Current PR Code Evaluation &amp; Diff Findings
                                 </span>
                               </div>
                               <div className="text-xs font-semibold text-slate-900 mt-0.5">
@@ -1011,87 +1023,200 @@ export default function ContributorsView() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                          {evidenceInvestigation.current_pr_assessment?.overall_summary && (
+                            <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                              {evidenceInvestigation.current_pr_assessment.overall_summary}
+                            </p>
+                          )}
+
+                          {/* Specific Line-by-Line Code Findings */}
+                          {evidenceInvestigation.current_pr_assessment?.code_issues?.length > 0 && (
+                            <div className="space-y-2 pt-2 border-t border-indigo-50">
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                                <Bug className="w-4 h-4 text-rose-600" />
+                                <span>Specific Line-by-Line Code Findings ({evidenceInvestigation.current_pr_assessment.code_issues.length}):</span>
+                              </div>
+                              <div className="space-y-2">
+                                {evidenceInvestigation.current_pr_assessment.code_issues.map((iss, iIdx) => {
+                                  const isHigh = iss.severity === 'HIGH';
+                                  const isMed = iss.severity === 'MEDIUM';
+                                  const sevClass = isHigh
+                                    ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                    : isMed
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                    : 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                                  return (
+                                    <div key={iIdx} className="p-3 rounded-lg border border-slate-200 bg-white text-xs space-y-1.5 shadow-2xs">
+                                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                                        <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-slate-800">
+                                          <FileCode className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                                          <span>{iss.file}</span>
+                                          {iss.line && <span className="text-indigo-600">:{iss.line}</span>}
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${sevClass}`}>
+                                            {iss.severity}
+                                          </span>
+                                          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200">
+                                            {iss.issue_type}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <p className="text-slate-700 text-[11px] leading-relaxed">{iss.description}</p>
+                                      {iss.suggested_fix && (
+                                        <div className="p-2 rounded bg-indigo-50/50 border border-indigo-100 text-[11px] text-indigo-900 font-mono">
+                                          <span className="font-bold">Suggested Fix: </span>
+                                          <span>{iss.suggested_fix}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* File-by-File Analysis Breakdown */}
+                          {evidenceInvestigation.current_pr_assessment?.file_analyses?.length > 0 && (
+                            <div className="space-y-2 pt-2 border-t border-indigo-50">
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                                <Layers className="w-4 h-4 text-indigo-600" />
+                                <span>File-by-File Engineering Analysis ({evidenceInvestigation.current_pr_assessment.file_analyses.length}):</span>
+                              </div>
+                              <div className="space-y-1.5">
+                                {evidenceInvestigation.current_pr_assessment.file_analyses.map((fa, fIdx) => (
+                                  <div key={fIdx} className="p-2.5 rounded-lg border border-[#E8E6DF] bg-[#FAF9F5] text-xs space-y-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <span className="font-mono font-bold text-slate-900 text-[11px] truncate">{fa.filename}</span>
+                                      <div className="flex items-center gap-1.5 shrink-0">
+                                        <span className="font-mono text-[10px] text-slate-600">+{fa.additions}/-{fa.deletions}</span>
+                                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold font-mono border ${
+                                          fa.risk_level === 'HIGH' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                                          fa.risk_level === 'MEDIUM' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                          'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                        }`}>
+                                          {fa.risk_level} RISK
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <p className="text-slate-600 text-[11px]">{fa.logic_analyzed}</p>
+                                    {fa.security_and_bugs_notes && (
+                                      <p className="text-[10px] text-slate-500 italic">Security: {fa.security_and_bugs_notes}</p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Test Suites Detected */}
+                          {evidenceInvestigation.current_pr_assessment?.test_files_detected?.length > 0 && (
+                            <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-200 text-xs space-y-1">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
+                                Test Suites Identified in Changes ({evidenceInvestigation.current_pr_assessment.test_files_detected.length}):
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {evidenceInvestigation.current_pr_assessment.test_files_detected.map((tf, tfIdx) => (
+                                  <span key={tfIdx} className="px-2 py-0.5 rounded text-[10px] font-mono bg-white text-emerald-700 border border-emerald-300 font-semibold">
+                                    {tf}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Security & Test Coverage Summaries */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
                             <div className="p-2.5 rounded-lg bg-[#FAF9F5] border border-[#E8E6DF] space-y-1">
-                              <span className="text-[10px] font-bold text-slate-500 uppercase">Security &amp; Bugs Check</span>
+                              <span className="text-[10px] font-bold text-slate-500 uppercase">Security Review</span>
                               <p className="text-slate-700 text-[11px] leading-relaxed">
-                                {evidenceInvestigation.current_pr_assessment?.security_and_bugs_check}
+                                {evidenceInvestigation.current_pr_assessment?.security_concerns || evidenceInvestigation.current_pr_assessment?.security_and_bugs_check}
                               </p>
                             </div>
                             <div className="p-2.5 rounded-lg bg-[#FAF9F5] border border-[#E8E6DF] space-y-1">
-                              <span className="text-[10px] font-bold text-slate-500 uppercase">Test Coverage &amp; Rigor</span>
+                              <span className="text-[10px] font-bold text-slate-500 uppercase">Test Rigor</span>
                               <p className="text-slate-700 text-[11px] leading-relaxed">
                                 {evidenceInvestigation.current_pr_assessment?.test_coverage_evaluation}
                               </p>
                             </div>
                           </div>
-
-                          {/* Code Review Findings */}
-                          {evidenceInvestigation.current_pr_assessment?.code_review_findings?.length > 0 && (
-                            <div className="space-y-1 pt-1">
-                              <span className="text-[11px] font-bold text-slate-800 block">Specific Code Review Findings:</span>
-                              <ul className="space-y-1 text-slate-600 text-[11px]">
-                                {evidenceInvestigation.current_pr_assessment.code_review_findings.map((f, idx) => (
-                                  <li key={idx} className="flex items-start gap-1.5">
-                                    <span className="text-indigo-600 font-bold shrink-0">&bull;</span>
-                                    <span>{f}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
                         </div>
 
-                        {/* CARD C: EVIDENCE CONFIDENCE & DATA COMPLETENESS */}
+                        {/* CARD C: EVIDENCE CONFIDENCE & COVERAGE SCOPE */}
                         <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-                          <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center justify-between gap-3 flex-wrap">
                             <div>
                               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block">
-                                Assessment C: Evidence Confidence &amp; Data Completeness
+                                Assessment C: Evidence Confidence &amp; Code Coverage
                               </span>
                               <span className="text-[11px] text-slate-500">
-                                Amount and completeness of verified public contribution evidence
+                                Depth of source code and unified git diffs analyzed
                               </span>
                             </div>
 
-                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold font-mono border ${
-                              evidenceInvestigation.evidence_confidence?.confidence_level === 'HIGH'
-                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                                : evidenceInvestigation.evidence_confidence?.confidence_level === 'MEDIUM'
-                                ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
-                                : 'bg-amber-50 text-amber-800 border-amber-200'
-                            }`}>
-                              {evidenceInvestigation.evidence_confidence?.confidence_level} CONFIDENCE
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold font-mono border ${
+                                evidenceInvestigation.evidence_confidence?.confidence_level === 'HIGH'
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                  : evidenceInvestigation.evidence_confidence?.confidence_level === 'MEDIUM'
+                                  ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                                  : 'bg-amber-50 text-amber-800 border-amber-200'
+                              }`}>
+                                {evidenceInvestigation.evidence_confidence?.confidence_level} CONFIDENCE
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border ${
+                                evidenceInvestigation.evidence_confidence?.coverage_status === 'FULL_CODE_ANALYSIS'
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                                  : 'bg-indigo-50 text-indigo-800 border-indigo-300'
+                              }`}>
+                                {evidenceInvestigation.evidence_confidence?.coverage_status || 'CODE_ANALYZED'}
+                              </span>
+                            </div>
                           </div>
 
                           {/* Metrics Strip */}
-                          <div className="grid grid-cols-3 gap-2 text-center">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-[10px] text-slate-500 block">PRs Audited</span>
+                              <span className="text-[10px] text-slate-500 block">PRs Available</span>
                               <span className="font-bold text-slate-900 font-mono text-sm">
-                                {evidenceInvestigation.evidence_confidence?.total_prs_analyzed || 0}
+                                {evidenceInvestigation.evidence_confidence?.total_prs_available || evidenceInvestigation.evidence_confidence?.total_prs_analyzed || 0}
                               </span>
                             </div>
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-[10px] text-slate-500 block">Deep Diffs Inspected</span>
+                              <span className="text-[10px] text-slate-500 block">PRs Inspected</span>
                               <span className="font-bold text-indigo-700 font-mono text-sm">
-                                {evidenceInvestigation.evidence_confidence?.deep_diffs_analyzed || 0}
+                                {evidenceInvestigation.evidence_confidence?.prs_inspected_count || evidenceInvestigation.evidence_confidence?.deep_diffs_analyzed || 0}
                               </span>
                             </div>
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-[10px] text-slate-500 block">Repositories Spanned</span>
+                              <span className="text-[10px] text-slate-500 block">Files Analyzed</span>
                               <span className="font-bold text-slate-900 font-mono text-sm">
-                                {evidenceInvestigation.evidence_confidence?.repos_spanned || 0}
+                                {evidenceInvestigation.evidence_confidence?.files_analyzed_count || 0}
+                              </span>
+                            </div>
+                            <div className="p-2 rounded-lg bg-white border border-slate-200">
+                              <span className="text-[10px] text-slate-500 block">Diff Lines Read</span>
+                              <span className="font-bold text-indigo-700 font-mono text-sm">
+                                {evidenceInvestigation.evidence_confidence?.lines_analyzed_count || 0}
                               </span>
                             </div>
                           </div>
 
-                          {/* Data Limitations Note */}
-                          <div className="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200">
-                            <span className="font-bold text-slate-800">Limitations &amp; Scope: </span>
-                            <span>{evidenceInvestigation.evidence_confidence?.data_limitations}</span>
-                          </div>
+                          {/* Sampling Strategy */}
+                          {evidenceInvestigation.evidence_confidence?.sampling_strategy_explained && (
+                            <div className="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200">
+                              <span className="font-bold text-slate-800">Sampling Disclosure: </span>
+                              <span>{evidenceInvestigation.evidence_confidence.sampling_strategy_explained}</span>
+                            </div>
+                          )}
+
+                          {/* Secret Redaction Badge */}
+                          {evidenceInvestigation.secret_redaction_applied && (
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-semibold">
+                              <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Credential Redaction Applied: All detected tokens and secrets were sanitized before LLM analysis.</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* CARD D: MAINTAINER REVIEW CHECKLIST */}
