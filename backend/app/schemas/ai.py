@@ -146,8 +146,25 @@ class ExplainDecisionResponse(BaseModel):
     metadata: AnalysisMetadata
 
 # ==========================================
-# 6. Phase 2 Evidence-Based AI Investigation
+# 6. Deep Code-Aware AI Contributor Investigation
 # ==========================================
+
+class CodeIssue(BaseModel):
+    file: str
+    line: Optional[int] = None
+    issue_type: str = "CODE_QUALITY"  # BUG, SECURITY, REGRESSION, MAINTAINABILITY, TESTING_GAP, DESIGN
+    severity: str = "MEDIUM"          # HIGH, MEDIUM, LOW, ADVISORY
+    description: str
+    suggested_fix: Optional[str] = None
+
+class FileAnalysis(BaseModel):
+    filename: str
+    status: str = "modified"          # modified, added, removed, renamed
+    additions: int = 0
+    deletions: int = 0
+    logic_analyzed: str = ""
+    risk_level: str = "LOW"           # LOW, MEDIUM, HIGH
+    security_and_bugs_notes: Optional[str] = None
 
 class ContributorEvidenceInvestigationRequest(BaseModel):
     contributor_id: str = Field(..., min_length=1, max_length=150)
@@ -156,10 +173,16 @@ class ContributorEvidenceInvestigationRequest(BaseModel):
     force_refresh: bool = Field(default=False)
 
 class ContributorBackgroundAssessment(BaseModel):
-    engineering_quality_rating: float = Field(default=0.5, ge=0.0, le=1.0)
+    engineering_quality_rating: Optional[float] = None  # 0.0 to 1.0, or None if insufficient evidence
+    is_insufficient_evidence: bool = False
     rubric_breakdown: Dict[str, float] = Field(default_factory=dict)
-    consistency_analysis: str = ""
+    technical_strengths: List[str] = Field(default_factory=list)
+    recurring_weaknesses: List[str] = Field(default_factory=list)
+    historical_consistency: str = ""
+    problem_solving_ability: str = ""
     complexity_assessment: str = ""
+    testing_habits: str = ""
+    feedback_responsiveness: str = ""
     positive_engineering_signals: List[str] = Field(default_factory=list)
     potential_technical_concerns: List[str] = Field(default_factory=list)
     summary: str = ""
@@ -168,20 +191,34 @@ class CurrentPRAssessment(BaseModel):
     pr_number: Optional[int] = None
     repo_name: Optional[str] = None
     title: Optional[str] = None
-    verdict: str = "NOT_APPLICABLE" # READY_TO_MERGE, NEEDS_REVISION, SECURITY_TRIAGE_RECOMMENDED, LOW_RISK, INSUFFICIENT_TESTS, NOT_APPLICABLE
+    verdict: str = "NOT_APPLICABLE"  # READY_TO_MERGE, NEEDS_REVISION, SECURITY_TRIAGE_RECOMMENDED, LOW_RISK, INSUFFICIENT_TESTS, NOT_APPLICABLE
+    implementation_quality_rating: Optional[float] = None
+    overall_summary: str = ""
+    code_issues: List[CodeIssue] = Field(default_factory=list)
+    file_analyses: List[FileAnalysis] = Field(default_factory=list)
     code_review_findings: List[str] = Field(default_factory=list)
-    security_and_bugs_check: str = ""
+    correctness_and_edge_cases: str = ""
+    security_concerns: str = ""
     test_coverage_evaluation: str = ""
-    maintainability_notes: str = ""
+    test_files_detected: List[str] = Field(default_factory=list)
+    maintainability_and_architecture: str = ""
+    problem_solution_alignment: str = ""
+    recommendations: List[str] = Field(default_factory=list)
 
 class EvidenceConfidence(BaseModel):
-    confidence_level: str = "LOW" # HIGH, MEDIUM, LOW, INSUFFICIENT
+    confidence_level: str = "LOW"    # HIGH, MEDIUM, LOW, INSUFFICIENT
     completeness_score: float = Field(default=0.5, ge=0.0, le=1.0)
-    total_prs_analyzed: int = 0
+    coverage_status: str = "PARTIAL_ANALYSIS"  # FULL_CODE_ANALYSIS, PARTIAL_ANALYSIS, INSUFFICIENT_EVIDENCE
+    total_prs_available: int = 0
+    prs_inspected_count: int = 0
+    sampling_strategy_explained: str = ""
+    files_analyzed_count: int = 0
+    lines_analyzed_count: int = 0
     deep_diffs_analyzed: int = 0
     repos_spanned: int = 0
     missing_evidence_notes: List[str] = Field(default_factory=list)
     data_limitations: str = ""
+    is_supported_by_code: bool = True
 
 class ContributorEvidenceInvestigationResponse(BaseModel):
     advisory_only: bool = True
@@ -193,6 +230,7 @@ class ContributorEvidenceInvestigationResponse(BaseModel):
     evidence_confidence: EvidenceConfidence
     investigation_checklist: List[str] = Field(default_factory=list)
     pr_records: List[Dict[str, Any]] = Field(default_factory=list)
+    secret_redaction_applied: bool = False
     last_synced_at: Optional[str] = None
     is_cached: bool = False
     metadata: AnalysisMetadata
