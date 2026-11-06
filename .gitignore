@@ -1,24 +1,25 @@
-# Environment & Secret files
-.env
-.env.*
-*.env
-backend/.env
-frontend/.env
-!.env.example
+# Python virtual environments
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+env/
 
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-backend/.venv/
-.venv/
-env/
-venv/
-backend/venv/
 .pytest_cache/
 *.log
+
+# Environment files
+.env
+.env.*
+backend/.env
+frontend/.env
+!.env.example
 
 # Databases & Local Data
 *.db
