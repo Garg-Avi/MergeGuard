@@ -9,7 +9,6 @@ export default function HeroNetworkCanvas() {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let width = (canvas.width = canvas.parentElement.clientWidth);
@@ -22,7 +21,7 @@ export default function HeroNetworkCanvas() {
     };
     window.addEventListener('resize', handleResize);
 
-    const mouse = { x: -1000, y: -1000, radius: 110 };
+    const mouse = { x: -1000, y: -1000, radius: 90 };
     const handleMouseMove = (e) => {
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
@@ -35,15 +34,15 @@ export default function HeroNetworkCanvas() {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
-    const nodeCount = Math.min(36, Math.floor(width / 34));
+    // Subtle, controlled node density - avoid excessive floating clutter
+    const nodeCount = Math.min(22, Math.max(12, Math.floor(width / 55)));
     const nodes = [];
 
-    // Distinctive Indigo, Violet, Cyan, and Amber palette
+    // Subtle neutral grey network nodes
     const nodeTypes = [
-      { fill: '#4F46E5', stroke: '#C7D2FE', r: 4 }, // Electric Indigo
-      { fill: '#7C3AED', stroke: '#DDD6FE', r: 3.5 }, // Rich Violet
-      { fill: '#0891B2', stroke: '#CFFAFE', r: 3.5 }, // Muted Cyan
-      { fill: '#6366F1', stroke: '#E0E7FF', r: 3 }, // Soft Indigo
+      { fill: '#777D87', stroke: 'rgba(176, 179, 186, 0.35)', r: 2.5 },
+      { fill: '#555B66', stroke: 'rgba(119, 125, 135, 0.30)', r: 2.25 },
+      { fill: '#8C929E', stroke: 'rgba(176, 179, 186, 0.25)', r: 2.75 },
     ];
 
     for (let i = 0; i < nodeCount; i++) {
@@ -51,8 +50,8 @@ export default function HeroNetworkCanvas() {
       nodes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: prefersReducedMotion ? 0 : (Math.random() - 0.5) * 0.35,
-        vy: prefersReducedMotion ? 0 : (Math.random() - 0.5) * 0.35,
+        vx: prefersReducedMotion ? 0 : (Math.random() - 0.5) * 0.18,
+        vy: prefersReducedMotion ? 0 : (Math.random() - 0.5) * 0.18,
         radius: type.r,
         fill: type.fill,
         stroke: type.stroke,
@@ -62,18 +61,18 @@ export default function HeroNetworkCanvas() {
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Connect near nodes with subtle indigo lines
+      // Connect near nodes with subtle, low-motion grey lines
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            const alpha = (1 - dist / 120) * 0.22;
+          if (dist < 130) {
+            const alpha = (1 - dist / 130) * 0.14;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            ctx.strokeStyle = `rgba(119, 125, 135, ${alpha})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -90,12 +89,12 @@ export default function HeroNetworkCanvas() {
           if (n.x < 0 || n.x > width) n.vx *= -1;
           if (n.y < 0 || n.y > height) n.vy *= -1;
 
-          // Subtle interactive mouse push
+          // Gentle mouse reaction
           const mdx = mouse.x - n.x;
           const mdy = mouse.y - n.y;
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
           if (mDist < mouse.radius) {
-            const force = (1 - mDist / mouse.radius) * 1.2;
+            const force = (1 - mDist / mouse.radius) * 0.8;
             n.x -= (mdx / (mDist || 1)) * force;
             n.y -= (mdy / (mDist || 1)) * force;
           }
@@ -105,7 +104,7 @@ export default function HeroNetworkCanvas() {
         ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
         ctx.fillStyle = n.fill;
         ctx.fill();
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1;
         ctx.strokeStyle = n.stroke;
         ctx.stroke();
       }
@@ -128,8 +127,13 @@ export default function HeroNetworkCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 pointer-events-auto opacity-70"
-      style={{ width: '100%', height: '100%' }}
+      className="absolute inset-0 pointer-events-auto opacity-60"
+      style={{
+        width: '100%',
+        height: '100%',
+        maskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 95%)',
+      }}
     />
   );
 }

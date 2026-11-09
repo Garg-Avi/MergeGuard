@@ -93,17 +93,17 @@ export default function CampaignsView() {
   return (
     <div className="space-y-6 animate-fade-in-up font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E6DF]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#2B2E35]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
               Security Alerts
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold font-mono border border-rose-200/60">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-950/80 text-rose-300 font-semibold font-mono border border-rose-800/40">
               {campaigns.length} Active
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-xs sm:text-sm text-[#B0B3BA] mt-1">
             Find unusual activity across repositories, such as synchronized spam pull requests.
           </p>
         </div>
@@ -119,9 +119,9 @@ export default function CampaignsView() {
       </div>
 
       {scanMessage && (
-        <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-900 flex items-center justify-between shadow-xs">
+        <div className="p-3.5 rounded-xl bg-[#202329] border border-[#2B2E35] text-xs text-[#B0B3BA] flex items-center justify-between shadow-xs">
           <span>{scanMessage}</span>
-          <button onClick={() => setScanMessage(null)} className="text-slate-400 hover:text-slate-700">
+          <button onClick={() => setScanMessage(null)} className="text-[#777D87] hover:text-[#F5F5F5]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -130,27 +130,27 @@ export default function CampaignsView() {
       {/* Analytics Summary */}
       {analytics && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div className="mg-card p-4 bg-white shadow-xs">
-            <div className="text-slate-500 text-[11px] font-medium">Active Alerts</div>
-            <div className="text-2xl font-bold text-slate-900 mt-1">
+          <div className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+            <div className="text-[#777D87] text-[11px] font-medium">Active Alerts</div>
+            <div className="text-2xl font-bold text-[#F5F5F5] mt-1">
               {analytics.total_campaigns || campaigns.length}
             </div>
           </div>
-          <div className="mg-card p-4 bg-white shadow-xs">
-            <div className="text-slate-500 text-[11px] font-medium">Under Investigation</div>
-            <div className="text-2xl font-bold text-amber-700 mt-1">
+          <div className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+            <div className="text-[#777D87] text-[11px] font-medium">Under Investigation</div>
+            <div className="text-2xl font-bold text-amber-400 mt-1">
               {analytics.status_breakdown?.['Active Investigation'] || 0}
             </div>
           </div>
-          <div className="mg-card p-4 bg-white shadow-xs">
-            <div className="text-slate-500 text-[11px] font-medium">Confirmed Spam</div>
-            <div className="text-2xl font-bold text-rose-600 mt-1">
+          <div className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+            <div className="text-[#777D87] text-[11px] font-medium">Confirmed Spam</div>
+            <div className="text-2xl font-bold text-rose-400 mt-1">
               {analytics.status_breakdown?.['Confirmed Coordinated Abuse'] || 0}
             </div>
           </div>
-          <div className="mg-card p-4 bg-white shadow-xs">
-            <div className="text-slate-500 text-[11px] font-medium">Dismissed</div>
-            <div className="text-2xl font-bold text-slate-600 mt-1">
+          <div className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+            <div className="text-[#777D87] text-[11px] font-medium">Dismissed</div>
+            <div className="text-2xl font-bold text-[#B0B3BA] mt-1">
               {analytics.status_breakdown?.['Dismissed'] || 0}
             </div>
           </div>
@@ -165,10 +165,10 @@ export default function CampaignsView() {
           ))}
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="mg-card p-14 text-center text-xs text-slate-500 bg-white">
-          <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
-          <p className="font-bold text-slate-900 text-sm">No Unusual Activity Detected</p>
-          <p className="mt-1 text-slate-500">All pull requests across your connected repositories appear normal and organic.</p>
+        <div className="mg-card p-14 text-center text-xs text-[#777D87] bg-[#17191F] border-[#2B2E35]">
+          <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+          <p className="font-bold text-[#F5F5F5] text-sm">No Unusual Activity Detected</p>
+          <p className="mt-1 text-[#777D87]">All pull requests across your connected repositories appear normal and organic.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -180,75 +180,75 @@ export default function CampaignsView() {
             return (
               <div
                 key={cmp.id}
-                className="mg-card overflow-hidden transition-all bg-white shadow-xs"
+                className="mg-card overflow-hidden transition-all bg-[#17191F] border border-[#2B2E35] shadow-xs"
               >
                 {/* Header Row */}
                 <div
                   onClick={() => setExpandedId(isExpanded ? null : cmp.id)}
-                  className="p-5 flex items-start justify-between gap-4 cursor-pointer hover:bg-[#FAF9F5] transition-colors"
+                  className="p-5 flex items-start justify-between gap-4 cursor-pointer hover:bg-[#202329]/60 transition-colors"
                 >
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="p-2.5 rounded-xl bg-amber-50 text-amber-700 mt-0.5 shrink-0 border border-amber-200/60">
+                    <div className="p-2.5 rounded-xl bg-amber-950/60 text-amber-400 mt-0.5 shrink-0 border border-amber-800/60">
                       <ShieldAlert className="w-4 h-4" />
                     </div>
 
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm text-slate-900">
+                        <span className="font-bold text-sm text-[#F5F5F5]">
                           {cmp.name}
                         </span>
-                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[11px]">
+                        <span className="px-2 py-0.5 rounded-md bg-[#111318] text-[#B0B3BA] border border-[#2B2E35] font-mono text-[11px]">
                           {cmp.campaign_code}
                         </span>
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                           cmp.status === 'Active Investigation'
-                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            ? 'bg-amber-950/60 text-amber-300 border-amber-800/60'
                             : cmp.status === 'Confirmed Coordinated Abuse'
-                            ? 'bg-rose-50 text-rose-700 border-rose-200'
-                            : 'bg-slate-100 text-slate-500 border-slate-200'
+                            ? 'bg-rose-950/60 text-rose-300 border-rose-800/60'
+                            : 'bg-[#202329] text-[#777D87] border-[#2B2E35]'
                         }`}>
                           {cmp.status}
                         </span>
                       </div>
 
-                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[#B0B3BA] line-clamp-2 leading-relaxed">
                         {cmp.description}
                       </p>
 
-                      <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-1 flex-wrap">
-                        <span>Pattern: <strong className="text-slate-800">{cmp.pattern_type}</strong></span>
+                      <div className="flex items-center gap-4 text-[11px] text-[#777D87] pt-1 flex-wrap">
+                        <span>Pattern: <strong className="text-[#F5F5F5]">{cmp.pattern_type}</strong></span>
                         <span>&bull;</span>
-                        <span>Similarity Match: <strong className="text-slate-800 font-mono">{Math.round((cmp.signal_strength || 0.85) * 100)}%</strong></span>
+                        <span>Similarity Match: <strong className="text-[#F5F5F5] font-mono">{Math.round((cmp.signal_strength || 0.85) * 100)}%</strong></span>
                         <span>&bull;</span>
-                        <span>Contributors Involved: <strong className="text-slate-800">{cmp.contributor_ids?.length || 0}</strong></span>
+                        <span>Contributors Involved: <strong className="text-[#F5F5F5]">{cmp.contributor_ids?.length || 0}</strong></span>
                       </div>
                     </div>
                   </div>
 
-                  <button className="text-slate-400 p-1 hover:text-slate-700 shrink-0 mt-1">
+                  <button className="text-[#777D87] p-1 hover:text-[#F5F5F5] shrink-0 mt-1">
                     {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
                 </div>
 
                 {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="px-5 pb-5 pt-2 border-t border-[#E8E6DF] space-y-4 text-xs bg-[#FAF9F5]">
+                  <div className="px-5 pb-5 pt-2 border-t border-[#242730] space-y-4 text-xs bg-[#111318]">
                     {/* Pull Request Samples */}
                     {cmp.evidence_records && cmp.evidence_records.length > 0 && (
                       <div className="space-y-2 pt-2">
-                        <span className="text-xs font-bold text-slate-900 block">
+                        <span className="text-xs font-bold text-[#F5F5F5] block">
                           Sample Pull Requests in this Pattern:
                         </span>
-                        <div className="divide-y divide-[#E8E6DF] border border-[#E8E6DF] rounded-xl overflow-hidden bg-white">
+                        <div className="divide-y divide-[#242730] border border-[#2B2E35] rounded-xl overflow-hidden bg-[#17191F]">
                           {cmp.evidence_records.map((ev, eIdx) => (
                             <div key={eIdx} className="p-3 flex items-center justify-between gap-3 text-xs">
                               <div className="flex items-center gap-2 truncate">
-                                <FileCode className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                                <span className="font-semibold text-slate-900 truncate">
+                                <FileCode className="w-3.5 h-3.5 text-[#777D87] shrink-0" />
+                                <span className="font-semibold text-[#F5F5F5] truncate">
                                   {ev.pr_title || ev.target || `Sample PR #${eIdx + 1}`}
                                 </span>
                                 {ev.contributor && (
-                                  <span className="text-slate-500 font-mono text-[11px]">by @{ev.contributor}</span>
+                                  <span className="text-[#777D87] font-mono text-[11px]">by @{ev.contributor}</span>
                                 )}
                               </div>
                               {ev.url && (
@@ -256,10 +256,10 @@ export default function CampaignsView() {
                                   href={ev.url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-indigo-600 hover:underline flex items-center gap-1 font-medium text-[11px] shrink-0"
+                                  className="text-[#B0B3BA] hover:text-[#F5F5F5] hover:underline flex items-center gap-1 font-medium text-[11px] shrink-0"
                                 >
                                   <span>View PR</span>
-                                  <ExternalLink className="w-3 h-3" />
+                                  <ExternalLink className="w-3 h-3 text-[#B0B3BA]" />
                                 </a>
                               )}
                             </div>
@@ -269,10 +269,10 @@ export default function CampaignsView() {
                     )}
 
                     {/* AI Reasoning Summary */}
-                    <div className="p-4 rounded-xl bg-white border border-[#E8E6DF] space-y-3 shadow-xs">
+                    <div className="p-4 rounded-xl bg-[#17191F] border border-[#2B2E35] space-y-3 shadow-xs">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                          <Cpu className="w-4 h-4 text-indigo-600" />
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#F5F5F5]">
+                          <Cpu className="w-4 h-4 text-[#777D87]" />
                           <span>Forensic Reasoning Summary</span>
                         </div>
 
@@ -282,17 +282,17 @@ export default function CampaignsView() {
                             disabled={isAiBusy}
                             className="mg-btn-secondary text-xs py-1"
                           >
-                            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                            <Sparkles className="w-3.5 h-3.5 text-[#777D87]" />
                             <span>{isAiBusy ? 'Summarizing...' : 'Summarize Alert'}</span>
                           </button>
                         )}
                       </div>
 
                       {explanation && (
-                        <div className="text-xs text-slate-700 space-y-2 pt-2 border-t border-[#E8E6DF]">
+                        <div className="text-xs text-[#B0B3BA] space-y-2 pt-2 border-t border-[#242730]">
                           <p className="leading-relaxed">{explanation.summary}</p>
                           {Array.isArray(explanation.investigation_checklist) && (
-                            <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                            <ul className="list-disc pl-4 space-y-1 text-[#777D87]">
                               {explanation.investigation_checklist.map((item, idx) => (
                                 <li key={idx}>{item}</li>
                               ))}
@@ -303,24 +303,24 @@ export default function CampaignsView() {
                     </div>
 
                     {/* Maintainer Triage Status Buttons */}
-                    <div className="pt-3 border-t border-[#E8E6DF] flex items-center justify-between flex-wrap gap-2">
-                      <span className="text-[11px] text-slate-500">Update Alert Status:</span>
+                    <div className="pt-3 border-t border-[#242730] flex items-center justify-between flex-wrap gap-2">
+                      <span className="text-[11px] text-[#777D87]">Update Alert Status:</span>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleUpdateStatus(cmp.id, 'Active Investigation')}
-                          className="px-3 py-1 rounded-lg text-xs font-medium border border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100"
+                          className="px-3 py-1 rounded-lg text-xs font-medium border border-amber-800/60 text-amber-300 bg-amber-950/40 hover:bg-amber-900/40 transition-colors"
                         >
                           Investigating
                         </button>
                         <button
                           onClick={() => handleUpdateStatus(cmp.id, 'Confirmed Coordinated Abuse')}
-                          className="px-3 py-1 rounded-lg text-xs font-medium border border-rose-300 text-rose-700 bg-rose-50 hover:bg-rose-100"
+                          className="px-3 py-1 rounded-lg text-xs font-medium border border-rose-800/60 text-rose-300 bg-rose-950/40 hover:bg-rose-900/40 transition-colors"
                         >
                           Confirmed Abuse
                         </button>
                         <button
                           onClick={() => handleUpdateStatus(cmp.id, 'Dismissed')}
-                          className="px-3 py-1 rounded-lg text-xs font-medium border border-slate-300 text-slate-600 bg-white hover:bg-slate-100"
+                          className="px-3 py-1 rounded-lg text-xs font-medium border border-[#2B2E35] text-[#B0B3BA] bg-[#17191F] hover:bg-[#202329] hover:text-[#F5F5F5] transition-colors"
                         >
                           Dismiss (False Alarm)
                         </button>

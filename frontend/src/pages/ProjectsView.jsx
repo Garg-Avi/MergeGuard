@@ -295,23 +295,23 @@ export default function ProjectsView() {
   return (
     <div className="space-y-6 animate-fade-in-up font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E6DF]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#2B2E35]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
               Repositories
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-semibold font-mono border border-indigo-200/60">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#202329] text-[#B0B3BA] font-semibold font-mono border border-[#2B2E35]">
               {projects.length}
             </span>
             {githubStatus && (
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 text-[10px] font-mono font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 GitHub API Active
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-xs sm:text-sm text-[#B0B3BA] mt-1">
             Manage connected GitHub repositories and trust policies.
           </p>
         </div>
@@ -336,12 +336,12 @@ export default function ProjectsView() {
       </div>
 
       {successMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between shadow-xs">
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
-            <Check className="w-4 h-4 text-emerald-600" />
+            <Check className="w-4 h-4 text-emerald-400" />
             <span>{successMsg}</span>
           </div>
-          <button onClick={() => setSuccessMsg('')} className="text-slate-400 hover:text-slate-700">
+          <button onClick={() => setSuccessMsg('')} className="text-[#777D87] hover:text-[#F5F5F5]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -350,26 +350,26 @@ export default function ProjectsView() {
       {/* Filters and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search repositories..."
-            className="mg-input pl-9 text-xs"
+            className="mg-input pl-9 text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
-          <span className="text-xs text-slate-400 shrink-0 font-medium">Category:</span>
+          <span className="text-xs text-[#777D87] shrink-0 font-medium">Category:</span>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
               className={`px-3 py-1 rounded-xl text-xs font-medium transition-all shrink-0 ${
                 categoryFilter === cat
-                  ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200/60 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'bg-[#202329] text-[#F5F5F5] font-semibold border border-[#D69B45]/50 shadow-xs'
+                  : 'text-[#B0B3BA] hover:text-[#F5F5F5] hover:bg-[#202329]'
               }`}
             >
               {cat}
@@ -386,10 +386,10 @@ export default function ProjectsView() {
           ))}
         </div>
       ) : filteredProjects.length === 0 ? (
-        <div className="mg-card p-14 text-center text-xs text-slate-500 bg-white">
-          <FolderGit2 className="w-10 h-10 mx-auto text-slate-300 mb-3" />
-          <p className="font-bold text-slate-900 text-sm">No repositories found</p>
-          <p className="mt-1 text-slate-500">Try modifying your search or import a repository.</p>
+        <div className="mg-card p-14 text-center text-xs text-[#777D87] bg-[#17191F] border-[#2B2E35]">
+          <FolderGit2 className="w-10 h-10 mx-auto text-[#777D87] mb-3" />
+          <p className="font-bold text-[#F5F5F5] text-sm">No repositories found</p>
+          <p className="mt-1 text-[#777D87]">Try modifying your search or import a repository.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -399,57 +399,57 @@ export default function ProjectsView() {
             const strictness = p.trust_policy?.strictness || 'balanced';
 
             return (
-              <div key={p.id} className="mg-card-interactive p-6 flex flex-col justify-between bg-white">
+              <div key={p.id} className="mg-card-interactive p-6 flex flex-col justify-between bg-[#17191F] border border-[#2B2E35]">
                 <div>
                   {/* Top Bar: Name, Stars, Category */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#202329] border border-[#2B2E35] flex items-center justify-center text-[#B0B3BA] shrink-0">
                         <FolderGit2 className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-bold text-base text-slate-900 truncate">
+                          <h3 className="font-bold text-base text-[#F5F5F5] truncate">
                             {p.name}
                           </h3>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#FAF9F5] text-slate-600 border border-[#E8E6DF]">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#202329] text-[#B0B3BA] border border-[#2B2E35]">
                             {p.category}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-400 font-mono mt-0.5 truncate">
+                        <div className="text-xs text-[#777D87] font-mono mt-0.5 truncate">
                           {p.slug}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-xs text-amber-600 font-semibold font-mono shrink-0">
-                      <Star className="w-3.5 h-3.5 fill-amber-500 stroke-none" />
+                    <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold font-mono shrink-0">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 stroke-none" />
                       <span>{p.stars?.toLocaleString() || 0}</span>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-600 mt-3.5 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#B0B3BA] mt-3.5 line-clamp-2 leading-relaxed">
                     {p.description || 'No description provided for this repository.'}
                   </p>
 
                   {/* Metadata Chips */}
                   <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px]">
-                    <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF9F5] text-slate-700 border border-[#E8E6DF]">
-                      Strictness: <span className="font-semibold text-slate-900 capitalize">{strictness}</span>
+                    <span className="px-2.5 py-0.5 rounded-lg bg-[#202329] text-[#B0B3BA] border border-[#2B2E35]">
+                      Strictness: <span className="font-semibold text-[#F5F5F5] capitalize">{strictness}</span>
                     </span>
 
-                    <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF9F5] text-slate-700 border border-[#E8E6DF]">
-                      Min Confidence: <span className="font-mono text-indigo-600 font-semibold">{((p.trust_policy?.min_confidence ?? 0.6) * 100).toFixed(0)}%</span>
+                    <span className="px-2.5 py-0.5 rounded-lg bg-[#202329] text-[#B0B3BA] border border-[#2B2E35]">
+                      Min Confidence: <span className="font-mono text-[#F5F5F5] font-semibold">{((p.trust_policy?.min_confidence ?? 0.6) * 100).toFixed(0)}%</span>
                     </span>
 
-                    <span className="px-2.5 py-0.5 rounded-lg bg-[#FAF9F5] text-slate-700 border border-[#E8E6DF]">
-                      Peers: <span className="font-mono text-emerald-700 font-bold">{peerCount}</span>
+                    <span className="px-2.5 py-0.5 rounded-lg bg-[#202329] text-[#B0B3BA] border border-[#2B2E35]">
+                      Peers: <span className="font-mono text-emerald-400 font-bold">{peerCount}</span>
                     </span>
 
                     {p.is_github_connected && (
-                      <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1 font-mono text-[10px] font-medium">
-                        <Check className="w-3 h-3 text-emerald-600" />
+                      <span className="px-2.5 py-0.5 rounded-lg bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 flex items-center gap-1 font-mono text-[10px] font-medium">
+                        <Check className="w-3 h-3 text-emerald-400" />
                         <span>GitHub Synced</span>
                       </span>
                     )}
@@ -457,12 +457,12 @@ export default function ProjectsView() {
 
                   {/* Inline Policy Editor */}
                   {isEditing && (
-                    <div className="mt-4 p-4 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-3.5 animate-fade-in-up">
-                      <div className="text-xs font-bold text-slate-900 flex items-center justify-between">
+                    <div className="mt-4 p-4 rounded-xl bg-[#202329] border border-[#2B2E35] space-y-3.5 animate-fade-in-up">
+                      <div className="text-xs font-bold text-[#F5F5F5] flex items-center justify-between">
                         <span>Tune Repository Trust Policy</span>
                         <button
                           onClick={() => setEditingId(null)}
-                          className="text-slate-400 hover:text-slate-700"
+                          className="text-[#777D87] hover:text-[#F5F5F5]"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -470,11 +470,11 @@ export default function ProjectsView() {
 
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         <div>
-                          <label className="block text-slate-600 font-medium mb-1">Strictness</label>
+                          <label className="block text-[#B0B3BA] font-medium mb-1">Strictness</label>
                           <select
                             value={editPolicy.strictness}
                             onChange={(e) => setEditPolicy({ ...editPolicy, strictness: e.target.value })}
-                            className="mg-input text-xs"
+                            className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                           >
                             <option value="lenient">Lenient (Forgiving)</option>
                             <option value="balanced">Balanced (Default)</option>
@@ -483,7 +483,7 @@ export default function ProjectsView() {
                         </div>
 
                         <div>
-                          <label className="block text-slate-600 font-medium mb-1">
+                          <label className="block text-[#B0B3BA] font-medium mb-1">
                             Min Confidence ({(editPolicy.min_confidence * 100).toFixed(0)}%)
                           </label>
                           <input
@@ -493,7 +493,7 @@ export default function ProjectsView() {
                             step="0.05"
                             value={editPolicy.min_confidence}
                             onChange={(e) => setEditPolicy({ ...editPolicy, min_confidence: parseFloat(e.target.value) })}
-                            className="w-full accent-indigo-600 mt-1"
+                            className="w-full accent-[#D69B45] mt-1"
                           />
                         </div>
                       </div>
@@ -519,13 +519,13 @@ export default function ProjectsView() {
                 </div>
 
                 {/* Card Action Footer */}
-                <div className="mt-5 pt-3.5 border-t border-[#E8E6DF] flex items-center justify-between text-xs">
+                <div className="mt-5 pt-3.5 border-t border-[#242730] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleOpenPeering(p)}
                       className="mg-btn-secondary text-xs py-1"
                     >
-                      <GitPullRequest className="w-3.5 h-3.5 text-indigo-600" />
+                      <GitPullRequest className="w-3.5 h-3.5 text-[#777D87]" />
                       <span>PRs & Peering</span>
                     </button>
 
@@ -533,7 +533,7 @@ export default function ProjectsView() {
                       onClick={() => handleStartEdit(p)}
                       className="mg-btn-secondary text-xs py-1"
                     >
-                      <Sliders className="w-3.5 h-3.5 text-slate-500" />
+                      <Sliders className="w-3.5 h-3.5 text-[#777D87]" />
                       <span>Policy</span>
                     </button>
                   </div>
@@ -544,7 +544,7 @@ export default function ProjectsView() {
                         href={p.repo_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors"
+                        className="p-1.5 text-[#777D87] hover:text-[#F5F5F5] rounded-lg hover:bg-[#202329] transition-colors"
                         title="View on GitHub"
                       >
                         <ExternalLink className="w-4 h-4" />
@@ -553,10 +553,10 @@ export default function ProjectsView() {
                     <button
                       onClick={() => handleSyncProject(p.id)}
                       disabled={syncingId === p.id}
-                      className="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-slate-100 transition-colors"
+                      className="p-1.5 text-[#777D87] hover:text-emerald-400 rounded-lg hover:bg-[#202329] transition-colors"
                       title="Sync Pull Requests via GitHub API"
                     >
-                      <RefreshCw className={`w-4 h-4 ${syncingId === p.id ? 'animate-spin text-indigo-600' : ''}`} />
+                      <RefreshCw className={`w-4 h-4 ${syncingId === p.id ? 'animate-spin text-[#D69B45]' : ''}`} />
                     </button>
                   </div>
                 </div>
@@ -568,23 +568,23 @@ export default function ProjectsView() {
 
       {/* MODAL: IMPORT GITHUB REPOSITORY */}
       {showImportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm font-sans animate-fade-in-up">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#E8E6DF] overflow-hidden">
-            <div className="bg-[#FAF9F5] px-6 py-4 border-b border-[#E8E6DF] flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm font-sans animate-fade-in-up">
+          <div className="w-full max-w-lg bg-[#17191F] rounded-2xl shadow-2xl border border-[#2B2E35] overflow-hidden">
+            <div className="bg-[#111318] px-6 py-4 border-b border-[#2B2E35] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-xl bg-[#202329] border border-[#2B2E35] flex items-center justify-center text-white">
                   <GithubIcon className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">
+                  <h3 className="font-bold text-sm text-[#F5F5F5]">
                     Import Public GitHub Repository
                   </h3>
-                  <p className="text-[11px] text-slate-500">Continuous Pull Request Surveillance</p>
+                  <p className="text-[11px] text-[#777D87]">Continuous Pull Request Surveillance</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowImportModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                className="p-1.5 text-[#777D87] hover:text-[#F5F5F5] rounded-lg hover:bg-[#202329]"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -592,13 +592,13 @@ export default function ProjectsView() {
 
             <form onSubmit={handleImportSubmit} className="p-6 space-y-4">
               {importError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+                <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300">
                   {importError}
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">
                   Public GitHub Repository URL
                 </label>
                 <input
@@ -607,21 +607,21 @@ export default function ProjectsView() {
                   value={importUrl}
                   onChange={(e) => setImportUrl(e.target.value)}
                   placeholder="https://github.com/facebook/react"
-                  className="mg-input font-mono text-xs"
+                  className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 />
-                <p className="text-[11px] text-slate-500 mt-1.5">
+                <p className="text-[11px] text-[#777D87] mt-1.5">
                   MergeGuard queries GitHub API v3, imports metadata, and synchronizes real pull requests.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">
                   Ecosystem Category
                 </label>
                 <select
                   value={importCategory}
                   onChange={(e) => setImportCategory(e.target.value)}
-                  className="mg-input text-xs"
+                  className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 >
                   <option value="Infrastructure">Infrastructure</option>
                   <option value="Distributed Systems">Distributed Systems</option>
@@ -632,7 +632,7 @@ export default function ProjectsView() {
                 </select>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2.5 border-t border-[#E8E6DF]">
+              <div className="pt-3 flex items-center justify-end gap-2.5 border-t border-[#242730]">
                 <button
                   type="button"
                   onClick={() => setShowImportModal(false)}
@@ -655,23 +655,23 @@ export default function ProjectsView() {
 
       {/* MODAL: REGISTER CUSTOM PROJECT */}
       {showRegisterModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm font-sans animate-fade-in-up">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#E8E6DF] overflow-hidden">
-            <div className="bg-[#FAF9F5] px-6 py-4 border-b border-[#E8E6DF] flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm font-sans animate-fade-in-up">
+          <div className="w-full max-w-lg bg-[#17191F] rounded-2xl shadow-2xl border border-[#2B2E35] overflow-hidden">
+            <div className="bg-[#111318] px-6 py-4 border-b border-[#2B2E35] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                <div className="w-8 h-8 rounded-xl bg-[#202329] border border-[#2B2E35] flex items-center justify-center text-[#D69B45]">
                   <FolderGit2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">
+                  <h3 className="font-bold text-sm text-[#F5F5F5]">
                     Register Custom Repository
                   </h3>
-                  <p className="text-[11px] text-slate-500">Custom Perimeter Ledger Node</p>
+                  <p className="text-[11px] text-[#777D87]">Custom Perimeter Ledger Node</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowRegisterModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                className="p-1.5 text-[#777D87] hover:text-[#F5F5F5] rounded-lg hover:bg-[#202329]"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -679,64 +679,64 @@ export default function ProjectsView() {
 
             <form onSubmit={handleRegisterSubmit} className="p-6 space-y-4">
               {registerError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+                <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300">
                   {registerError}
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Name</label>
+                  <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">Name</label>
                   <input
                     type="text"
                     required
                     value={registerForm.name}
                     onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
                     placeholder="VectorGuard AI"
-                    className="mg-input text-xs"
+                    className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Slug (optional)</label>
+                  <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">Slug (optional)</label>
                   <input
                     type="text"
                     value={registerForm.slug}
                     onChange={(e) => setRegisterForm({ ...registerForm, slug: e.target.value })}
                     placeholder="vectorguard-ai"
-                    className="mg-input font-mono text-xs"
+                    className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Repository URL</label>
+                <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">Repository URL</label>
                 <input
                   type="url"
                   value={registerForm.repo_url}
                   onChange={(e) => setRegisterForm({ ...registerForm, repo_url: e.target.value })}
                   placeholder="https://github.com/org/repo"
-                  className="mg-input font-mono text-xs"
+                  className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Description</label>
+                <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">Description</label>
                 <textarea
                   rows={2}
                   value={registerForm.description}
                   onChange={(e) => setRegisterForm({ ...registerForm, description: e.target.value })}
                   placeholder="Security and trust proxy for embedding vectors..."
-                  className="mg-input text-xs"
+                  className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Category</label>
+                  <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">Category</label>
                   <select
                     value={registerForm.category}
                     onChange={(e) => setRegisterForm({ ...registerForm, category: e.target.value })}
-                    className="mg-input text-xs"
+                    className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   >
                     <option value="Infrastructure">Infrastructure</option>
                     <option value="Distributed Systems">Distributed Systems</option>
@@ -747,11 +747,11 @@ export default function ProjectsView() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Policy Strictness</label>
+                  <label className="block text-xs font-semibold text-[#B0B3BA] mb-1.5">Policy Strictness</label>
                   <select
                     value={registerForm.strictness}
                     onChange={(e) => setRegisterForm({ ...registerForm, strictness: e.target.value })}
-                    className="mg-input text-xs"
+                    className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   >
                     <option value="lenient">Lenient</option>
                     <option value="balanced">Balanced</option>
@@ -760,7 +760,7 @@ export default function ProjectsView() {
                 </div>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2.5 border-t border-[#E8E6DF]">
+              <div className="pt-3 flex items-center justify-end gap-2.5 border-t border-[#242730]">
                 <button
                   type="button"
                   onClick={() => setShowRegisterModal(false)}
@@ -783,19 +783,19 @@ export default function ProjectsView() {
 
       {/* MODAL: PULL REQUESTS & PEERING MANAGEMENT */}
       {peeringProj && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm font-sans animate-fade-in-up">
-          <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-[#E8E6DF] max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm font-sans animate-fade-in-up">
+          <div className="w-full max-w-3xl bg-[#17191F] rounded-2xl shadow-2xl border border-[#2B2E35] max-h-[90vh] flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="bg-[#FAF9F5] px-6 py-4 border-b border-[#E8E6DF] flex items-center justify-between shrink-0">
+            <div className="bg-[#111318] px-6 py-4 border-b border-[#2B2E35] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                <div className="w-9 h-9 rounded-xl bg-[#202329] border border-[#2B2E35] flex items-center justify-center text-[#D69B45]">
                   <FolderGit2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-slate-900">
+                  <h3 className="font-bold text-base text-[#F5F5F5]">
                     {peeringProj.name}
                   </h3>
-                  <div className="text-[11px] text-slate-400 font-mono">
+                  <div className="text-[11px] text-[#777D87] font-mono">
                     {peeringProj.slug}
                   </div>
                 </div>
@@ -803,34 +803,34 @@ export default function ProjectsView() {
 
               <button
                 onClick={() => setPeeringProj(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                className="p-1.5 text-[#777D87] hover:text-[#F5F5F5] rounded-lg hover:bg-[#202329]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Modal Sub-tabs */}
-            <div className="flex p-1.5 mx-6 mt-4 bg-[#F4F3EE] rounded-xl text-xs font-medium shrink-0">
+            <div className="flex p-1.5 mx-6 mt-4 bg-[#111318] border border-[#2B2E35] rounded-xl text-xs font-medium shrink-0">
               <button
                 onClick={() => setPeeringTab('pulls')}
                 className={`flex-1 py-2 rounded-lg transition-all flex items-center justify-center gap-2 ${
                   peeringTab === 'pulls'
-                    ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#202329] text-[#F5F5F5] font-semibold shadow-xs'
+                    : 'text-[#B0B3BA] hover:text-[#F5F5F5]'
                 }`}
               >
-                <GitPullRequest className="w-3.5 h-3.5 text-indigo-600" />
+                <GitPullRequest className="w-3.5 h-3.5 text-[#777D87]" />
                 <span>Pull Requests ({projectPulls.length})</span>
               </button>
               <button
                 onClick={() => setPeeringTab('peering')}
                 className={`flex-1 py-2 rounded-lg transition-all flex items-center justify-center gap-2 ${
                   peeringTab === 'peering'
-                    ? 'bg-white text-indigo-700 font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-[#202329] text-[#F5F5F5] font-semibold shadow-xs'
+                    : 'text-[#B0B3BA] hover:text-[#F5F5F5]'
                 }`}
               >
-                <Network className="w-3.5 h-3.5 text-indigo-600" />
+                <Network className="w-3.5 h-3.5 text-[#777D87]" />
                 <span>Peer Trust Weights</span>
               </button>
             </div>
@@ -840,12 +840,19 @@ export default function ProjectsView() {
               {/* TAB: PULL REQUESTS */}
               {peeringTab === 'pulls' && (
                 <div className="space-y-3.5">
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span>Synchronized Pull Requests from GitHub API</span>
+                  <div className="flex items-center justify-between text-xs text-[#B0B3BA]">
+                    <div>
+                      <span className="font-semibold text-[#F5F5F5]">
+                        Repository-Wide Pull Requests (All Contributors)
+                      </span>
+                      <span className="text-[11px] text-[#777D87] block">
+                        Synchronized repository activity across all authors from GitHub API.
+                      </span>
+                    </div>
                     <button
                       onClick={() => handleSyncProject(peeringProj.id)}
                       disabled={syncingId === peeringProj.id}
-                      className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1.5"
+                      className="text-[#B0B3BA] hover:text-[#F5F5F5] font-medium flex items-center gap-1.5"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${syncingId === peeringProj.id ? 'animate-spin' : ''}`} />
                       <span>Re-sync PRs</span>
@@ -853,28 +860,28 @@ export default function ProjectsView() {
                   </div>
 
                   {projectPulls.length === 0 ? (
-                    <div className="p-10 text-center text-xs text-slate-400 mg-card bg-[#FAF9F5]">
+                    <div className="p-10 text-center text-xs text-[#777D87] mg-card bg-[#111318] border border-[#2B2E35] rounded-xl">
                       No pull requests synchronized for this repository yet. Click "Re-sync PRs" to fetch from GitHub.
                     </div>
                   ) : (
-                    <div className="divide-y divide-[#E8E6DF] border border-[#E8E6DF] rounded-xl overflow-hidden bg-white shadow-xs">
+                    <div className="divide-y divide-[#242730] border border-[#2B2E35] rounded-xl overflow-hidden bg-[#111318] shadow-xs">
                       {projectPulls.map((pr) => (
-                        <div key={pr.id} className="p-3.5 text-xs flex items-start justify-between gap-4 hover:bg-[#FAF9F5] transition-colors">
+                        <div key={pr.id} className="p-3.5 text-xs flex items-start justify-between gap-4 hover:bg-[#202329]/60 transition-colors">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-slate-900 truncate">
+                              <span className="font-bold text-[#F5F5F5] truncate">
                                 #{pr.pr_number} {pr.title}
                               </span>
                               <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${
                                 pr.verification_status === 'VERIFIED_GITHUB'
-                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                                  : 'bg-amber-50 text-amber-800 border-amber-200'
+                                  ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60'
+                                  : 'bg-amber-950/60 text-amber-300 border-amber-800/60'
                               }`}>
                                 {pr.verification_status === 'VERIFIED_GITHUB' ? 'Verified GitHub PR' : 'Pending Verification'}
                               </span>
                             </div>
 
-                            <div className="text-[11px] text-slate-500 flex items-center gap-3 mt-1 font-mono">
+                            <div className="text-[11px] text-[#777D87] flex items-center gap-3 mt-1 font-mono">
                               <span>Author: @{pr.author_username}</span>
                               <span>&bull; Branch: {pr.head_branch}</span>
                               {pr.html_url && (
@@ -882,10 +889,10 @@ export default function ProjectsView() {
                                   href={pr.html_url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-indigo-600 hover:underline flex items-center gap-1"
+                                  className="text-[#B0B3BA] hover:text-[#F5F5F5] hover:underline flex items-center gap-1"
                                 >
                                   <span>View on GitHub</span>
-                                  <ExternalLink className="w-3 h-3" />
+                                  <ExternalLink className="w-3 h-3 text-[#B0B3BA]" />
                                 </a>
                               )}
                             </div>
@@ -894,10 +901,10 @@ export default function ProjectsView() {
                           <div className="flex items-center gap-2 shrink-0">
                             <button
                               onClick={() => handleInspectAuthor(pr.author_username, peeringProj.id, pr.pr_number)}
-                              className="mg-btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1.5 text-indigo-700 bg-indigo-50/70 hover:bg-indigo-100 border-indigo-200"
+                              className="mg-btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1.5 text-[#F5F5F5]"
                               title="Run evidence-based engineering investigation with connected GPT"
                             >
-                              <Bot className="w-3.5 h-3.5 text-indigo-600" />
+                              <Bot className="w-3.5 h-3.5 text-[#777D87]" />
                               <span>Inspect Author (GPT)</span>
                             </button>
                             <button
@@ -919,21 +926,21 @@ export default function ProjectsView() {
               {peeringTab === 'peering' && (
                 <div className="space-y-4">
                   {/* Configure New Peer Weight */}
-                  <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-3.5">
-                    <h4 className="text-xs font-bold text-slate-900">
+                  <div className="p-4 rounded-xl bg-[#202329] border border-[#2B2E35] space-y-3.5">
+                    <h4 className="text-xs font-bold text-[#F5F5F5]">
                       Add / Update Subjective Peer Weight
                     </h4>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-[#777D87]">
                       Signals from the selected repository will be multiplied by this weight when evaluating contributor trust.
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                       <div>
-                        <label className="block text-slate-600 font-medium mb-1">Target Repository</label>
+                        <label className="block text-[#B0B3BA] font-medium mb-1">Target Repository</label>
                         <select
                           value={newPeerTargetId}
                           onChange={(e) => setNewPeerTargetId(e.target.value)}
-                          className="mg-input text-xs"
+                          className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                         >
                           {projects
                             .filter((p) => p.id !== peeringProj.id)
@@ -946,8 +953,8 @@ export default function ProjectsView() {
                       </div>
 
                       <div>
-                        <label className="block text-slate-600 font-medium mb-1">
-                          Peer Weight: <span className="font-mono text-indigo-600 font-bold">{(newPeerWeight * 100).toFixed(0)}%</span>
+                        <label className="block text-[#B0B3BA] font-medium mb-1">
+                          Peer Weight: <span className="font-mono text-[#F5F5F5] font-bold">{(newPeerWeight * 100).toFixed(0)}%</span>
                         </label>
                         <input
                           type="range"
@@ -956,7 +963,7 @@ export default function ProjectsView() {
                           step="0.05"
                           value={newPeerWeight}
                           onChange={(e) => setNewPeerWeight(parseFloat(e.target.value))}
-                          className="w-full accent-indigo-600 mt-1"
+                          className="w-full accent-[#D69B45] mt-1"
                         />
                       </div>
                     </div>
@@ -974,29 +981,29 @@ export default function ProjectsView() {
 
                   {/* Existing Relationships List */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800 mb-2.5">
+                    <h4 className="text-xs font-bold text-[#F5F5F5] mb-2.5">
                       Active Peer Relationships
                     </h4>
 
                     {relLoading ? (
-                      <div className="text-xs text-slate-400 p-4 text-center">Loading relationships...</div>
+                      <div className="text-xs text-[#777D87] p-4 text-center">Loading relationships...</div>
                     ) : relationships?.outgoing?.length === 0 ? (
-                      <div className="p-6 rounded-xl border border-[#E8E6DF] text-center text-xs text-slate-400 bg-white">
+                      <div className="p-6 rounded-xl border border-[#2B2E35] text-center text-xs text-[#777D87] bg-[#111318]">
                         No peer trust weights configured yet. Add a peer above to establish subjective trust.
                       </div>
                     ) : (
-                      <div className="divide-y divide-[#E8E6DF] border border-[#E8E6DF] rounded-xl overflow-hidden bg-white text-xs shadow-xs">
+                      <div className="divide-y divide-[#242730] border border-[#2B2E35] rounded-xl overflow-hidden bg-[#111318] text-xs shadow-xs">
                         {relationships?.outgoing?.map((edge) => (
-                          <div key={edge.id} className="p-3 flex items-center justify-between hover:bg-[#FAF9F5] transition-colors">
+                          <div key={edge.id} className="p-3 flex items-center justify-between hover:bg-[#202329]/60 transition-colors">
                             <div>
-                              <span className="font-bold text-slate-900">
+                              <span className="font-bold text-[#F5F5F5]">
                                 &rarr; {edge.target_project_name || edge.target_project_id}
                               </span>
-                              <div className="text-[10px] text-slate-400 mt-0.5">
+                              <div className="text-[10px] text-[#777D87] mt-0.5">
                                 {edge.notes || 'Configured subjective peer weight'}
                               </div>
                             </div>
-                            <span className="font-mono text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200/50">
+                            <span className="font-mono text-xs text-[#F5F5F5] font-bold bg-[#202329] px-2 py-0.5 rounded-md border border-[#2B2E35]">
                               {(edge.trust_weight * 100).toFixed(0)}% Weight
                             </span>
                           </div>
@@ -1009,7 +1016,7 @@ export default function ProjectsView() {
             </div>
 
             {/* Footer */}
-            <div className="bg-[#FAF9F5] px-6 py-3.5 border-t border-[#E8E6DF] flex justify-end shrink-0">
+            <div className="bg-[#111318] px-6 py-3.5 border-t border-[#2B2E35] flex justify-end shrink-0">
               <button
                 onClick={() => setPeeringProj(null)}
                 className="mg-btn-secondary text-xs"
@@ -1023,44 +1030,44 @@ export default function ProjectsView() {
 
       {/* MODAL: PR AUTHOR GPT BACKGROUND CHECK */}
       {inspectingAuthor && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in font-sans">
+          <div className="bg-[#17191F] border border-[#2B2E35] rounded-2xl shadow-2xl max-w-xl w-full max-h-[85vh] flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="p-4 sm:p-5 border-b border-[#E8E6DF] flex items-center justify-between bg-white shrink-0">
+            <div className="p-4 sm:p-5 border-b border-[#2B2E35] flex items-center justify-between bg-[#111318] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 rounded-lg bg-[#202329] border border-[#2B2E35] text-[#D69B45] flex items-center justify-center shadow-xs">
                   <Bot className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-[#F5F5F5]">
                       Author Check: @{inspectingAuthor}
                     </h3>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-800/60">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       GPT-OSS-120B Connected
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-[#777D87]">
                     Live background evaluation of past pull requests and acceptance rate
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setInspectingAuthor(null)}
-                className="text-slate-400 hover:text-slate-700 p-1 rounded-md"
+                className="text-[#777D87] hover:text-[#F5F5F5] p-1 rounded-md hover:bg-[#202329]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Body */}
-            <div className="p-5 overflow-y-auto space-y-3.5 flex-1">
+            <div className="p-5 overflow-y-auto space-y-3.5 flex-1 bg-[#090A0C]">
               {authorAiLoading && (
-                <div className="p-8 text-center text-xs text-slate-500 space-y-2.5 bg-[#FAF9F5] rounded-xl border border-[#E8E6DF]">
-                  <RefreshCw className="w-6 h-6 text-indigo-600 animate-spin mx-auto" />
-                  <p className="font-semibold text-slate-800">Connecting to Groq GPT-OSS-120B...</p>
-                  <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                <div className="p-8 text-center text-xs text-[#B0B3BA] space-y-2.5 bg-[#17191F] rounded-xl border border-[#2B2E35]">
+                  <RefreshCw className="w-6 h-6 text-[#D69B45] animate-spin mx-auto" />
+                  <p className="font-semibold text-[#F5F5F5]">Connecting to Groq GPT-OSS-120B...</p>
+                  <p className="text-[11px] text-[#777D87] max-w-sm mx-auto">
                     Retrieving PR history, calculating merge acceptance %, and generating maintainer triage summary.
                   </p>
                 </div>
@@ -1069,19 +1076,19 @@ export default function ProjectsView() {
               {!authorAiLoading && authorAiData && (
                 <div className="space-y-3.5">
                   {/* ASSESSMENT A: BACKGROUND QUALITY */}
-                  <div className="p-3.5 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-2.5">
+                  <div className="p-3.5 rounded-xl bg-[#17191F] border border-[#2B2E35] space-y-2.5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 block">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#B0B3BA] block">
                           Assessment A: Engineering Quality
                         </span>
-                        <p className="text-xs text-slate-700 leading-relaxed font-medium mt-0.5">
+                        <p className="text-xs text-[#B0B3BA] leading-relaxed font-medium mt-0.5">
                           {authorAiData.background_assessment?.summary}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-[10px] text-slate-400 block font-bold uppercase">Rating</span>
-                        <span className="text-xl font-black text-slate-900 font-mono">
+                        <span className="text-[10px] text-[#777D87] block font-bold uppercase">Rating</span>
+                        <span className="text-xl font-black text-[#F5F5F5] font-mono">
                           {Math.round((authorAiData.background_assessment?.engineering_quality_rating ?? 0.5) * 100)}%
                         </span>
                       </div>
@@ -1090,27 +1097,27 @@ export default function ProjectsView() {
                     {/* Rubric Breakdown */}
                     {authorAiData.background_assessment?.rubric_breakdown && (
                       <div className="grid grid-cols-4 gap-1.5 pt-1">
-                        <div className="p-1.5 rounded bg-white border border-slate-200 text-center">
-                          <span className="text-[9px] text-slate-400 block">Structure</span>
-                          <span className="font-bold text-slate-800 font-mono text-[10px]">
+                        <div className="p-1.5 rounded bg-[#111318] border border-[#2B2E35] text-center">
+                          <span className="text-[9px] text-[#777D87] block">Structure</span>
+                          <span className="font-bold text-[#F5F5F5] font-mono text-[10px]">
                             {Math.round((authorAiData.background_assessment.rubric_breakdown.code_structure ?? 0.5) * 100)}%
                           </span>
                         </div>
-                        <div className="p-1.5 rounded bg-white border border-slate-200 text-center">
-                          <span className="text-[9px] text-slate-400 block">Maintainability</span>
-                          <span className="font-bold text-slate-800 font-mono text-[10px]">
+                        <div className="p-1.5 rounded bg-[#111318] border border-[#2B2E35] text-center">
+                          <span className="text-[9px] text-[#777D87] block">Maintainability</span>
+                          <span className="font-bold text-[#F5F5F5] font-mono text-[10px]">
                             {Math.round((authorAiData.background_assessment.rubric_breakdown.maintainability ?? 0.5) * 100)}%
                           </span>
                         </div>
-                        <div className="p-1.5 rounded bg-white border border-slate-200 text-center">
-                          <span className="text-[9px] text-slate-400 block">Tests</span>
-                          <span className="font-bold text-slate-800 font-mono text-[10px]">
+                        <div className="p-1.5 rounded bg-[#111318] border border-[#2B2E35] text-center">
+                          <span className="text-[9px] text-[#777D87] block">Tests</span>
+                          <span className="font-bold text-[#F5F5F5] font-mono text-[10px]">
                             {Math.round((authorAiData.background_assessment.rubric_breakdown.test_coverage ?? 0.5) * 100)}%
                           </span>
                         </div>
-                        <div className="p-1.5 rounded bg-white border border-slate-200 text-center">
-                          <span className="text-[9px] text-slate-400 block">Collaboration</span>
-                          <span className="font-bold text-slate-800 font-mono text-[10px]">
+                        <div className="p-1.5 rounded bg-[#111318] border border-[#2B2E35] text-center">
+                          <span className="text-[9px] text-[#777D87] block">Collaboration</span>
+                          <span className="font-bold text-[#F5F5F5] font-mono text-[10px]">
                             {Math.round((authorAiData.background_assessment.rubric_breakdown.collaboration ?? 0.5) * 100)}%
                           </span>
                         </div>
@@ -1118,30 +1125,30 @@ export default function ProjectsView() {
                     )}
 
                     {/* Signals & Concerns */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#E8E6DF] text-[11px]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#242730] text-[11px]">
                       <div className="space-y-1">
-                        <span className="font-bold text-emerald-800 flex items-center gap-1">
-                          <Check className="w-3 h-3 text-emerald-600" />
+                        <span className="font-bold text-emerald-400 flex items-center gap-1">
+                          <Check className="w-3 h-3 text-emerald-400" />
                           <span>Positive Signals</span>
                         </span>
-                        <ul className="space-y-0.5 text-slate-600">
+                        <ul className="space-y-0.5 text-[#B0B3BA]">
                           {(authorAiData.background_assessment?.positive_engineering_signals || []).map((s, idx) => (
                             <li key={idx} className="flex items-start gap-1">
-                              <span className="text-emerald-500 font-bold">&bull;</span>
+                              <span className="text-emerald-400 font-bold">&bull;</span>
                               <span>{s}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                       <div className="space-y-1">
-                        <span className="font-bold text-amber-800 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-amber-600" />
+                        <span className="font-bold text-amber-400 flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-amber-400" />
                           <span>Potential Concerns</span>
                         </span>
-                        <ul className="space-y-0.5 text-slate-600">
+                        <ul className="space-y-0.5 text-[#B0B3BA]">
                           {(authorAiData.background_assessment?.potential_technical_concerns || []).map((c, idx) => (
                             <li key={idx} className="flex items-start gap-1">
-                              <span className="text-amber-500 font-bold">&bull;</span>
+                              <span className="text-amber-400 font-bold">&bull;</span>
                               <span>{c}</span>
                             </li>
                           ))}
@@ -1151,42 +1158,42 @@ export default function ProjectsView() {
                   </div>
 
                   {/* ASSESSMENT B: CURRENT PR EVALUATION */}
-                  <div className="p-3.5 rounded-xl bg-white border border-indigo-100 shadow-xs space-y-2 text-xs">
+                  <div className="p-3.5 rounded-xl bg-[#17191F] border border-[#2B2E35] shadow-xs space-y-2 text-xs">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#B0B3BA]">
                         Assessment B: Pull Request Code Review
                       </span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border bg-indigo-50 text-indigo-800 border-indigo-200">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border bg-[#202329] text-[#B0B3BA] border border-[#2B2E35]">
                         {authorAiData.current_pr_assessment?.verdict || 'REVIEW_READY'}
                       </span>
                     </div>
 
-                    <div className="text-[11px] text-slate-700 space-y-1">
+                    <div className="text-[11px] text-[#B0B3BA] space-y-1">
                       <p>
-                        <span className="font-bold text-slate-900">Security Check: </span>
+                        <span className="font-bold text-[#F5F5F5]">Security Check: </span>
                         {authorAiData.current_pr_assessment?.security_and_bugs_check}
                       </p>
                       <p>
-                        <span className="font-bold text-slate-900">Test Coverage: </span>
+                        <span className="font-bold text-[#F5F5F5]">Test Coverage: </span>
                         {authorAiData.current_pr_assessment?.test_coverage_evaluation}
                       </p>
                     </div>
 
                     {Array.isArray(authorAiData.current_pr_assessment?.code_issues) && authorAiData.current_pr_assessment.code_issues.length > 0 && (
-                      <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                        <span className="font-bold text-slate-800 text-[10px] uppercase block">
+                      <div className="pt-2 border-t border-[#242730] space-y-1.5">
+                        <span className="font-bold text-[#F5F5F5] text-[10px] uppercase block">
                           Line-by-Line Code Findings ({authorAiData.current_pr_assessment.code_issues.length}):
                         </span>
                         <div className="space-y-1.5">
                           {authorAiData.current_pr_assessment.code_issues.map((iss, iIdx) => (
-                            <div key={iIdx} className="p-2 rounded bg-slate-50 border border-slate-200 text-[11px] space-y-1">
+                            <div key={iIdx} className="p-2 rounded bg-[#111318] border border-[#2B2E35] text-[11px] space-y-1">
                               <div className="flex items-center justify-between gap-1 flex-wrap font-mono">
-                                <span className="font-bold text-slate-800">{iss.file}{iss.line ? `:${iss.line}` : ''}</span>
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-white border border-slate-200 font-bold">{iss.severity}</span>
+                                <span className="font-bold text-[#F5F5F5]">{iss.file}{iss.line ? `:${iss.line}` : ''}</span>
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#202329] border border-[#2B2E35] font-bold text-rose-400">{iss.severity}</span>
                               </div>
-                              <p className="text-slate-600">{iss.description}</p>
+                              <p className="text-[#B0B3BA]">{iss.description}</p>
                               {iss.suggested_fix && (
-                                <p className="text-[10px] text-indigo-700 font-mono">Fix: {iss.suggested_fix}</p>
+                                <p className="text-[10px] text-[#F5F5F5] font-mono">Fix: {iss.suggested_fix}</p>
                               )}
                             </div>
                           ))}
@@ -1195,12 +1202,12 @@ export default function ProjectsView() {
                     )}
 
                     {Array.isArray(authorAiData.current_pr_assessment?.code_review_findings) && authorAiData.current_pr_assessment.code_review_findings.length > 0 && (
-                      <div className="pt-1.5 border-t border-slate-100 space-y-1">
-                        <span className="font-bold text-slate-800 text-[10px] uppercase block">Findings:</span>
-                        <ul className="space-y-0.5 text-slate-600 text-[11px]">
+                      <div className="pt-1.5 border-t border-[#242730] space-y-1">
+                        <span className="font-bold text-[#F5F5F5] text-[10px] uppercase block">Findings:</span>
+                        <ul className="space-y-0.5 text-[#B0B3BA] text-[11px]">
                           {authorAiData.current_pr_assessment.code_review_findings.map((f, idx) => (
                             <li key={idx} className="flex items-start gap-1">
-                              <span className="text-indigo-600 font-bold">&bull;</span>
+                              <span className="text-[#B0B3BA] font-bold">&bull;</span>
                               <span>{f}</span>
                             </li>
                           ))}
@@ -1210,31 +1217,31 @@ export default function ProjectsView() {
                   </div>
 
                   {/* ASSESSMENT C: EVIDENCE CONFIDENCE */}
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                  <div className="p-3 rounded-xl bg-[#17191F] border border-[#2B2E35] flex items-center justify-between text-xs">
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#777D87] block">
                         Assessment C: Evidence Depth
                       </span>
-                      <span className="text-slate-600 text-[11px]">
+                      <span className="text-[#B0B3BA] text-[11px]">
                         {authorAiData.evidence_confidence?.total_prs_analyzed || 0} PRs analyzed across {authorAiData.evidence_confidence?.repos_spanned || 0} repo(s).
                       </span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border bg-white border-slate-300 text-slate-800">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border bg-[#111318] border-[#2B2E35] text-[#F5F5F5]">
                       {authorAiData.evidence_confidence?.confidence_level} CONFIDENCE
                     </span>
                   </div>
 
                   {/* Maintainer Checklist */}
                   {Array.isArray(authorAiData.investigation_checklist) && authorAiData.investigation_checklist.length > 0 && (
-                    <div className="p-3 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-1.5 text-xs">
-                      <div className="flex items-center gap-1.5 font-bold text-slate-900 text-xs">
-                        <ListChecks className="w-3.5 h-3.5 text-indigo-600" />
+                    <div className="p-3 rounded-xl bg-[#17191F] border border-[#2B2E35] space-y-1.5 text-xs">
+                      <div className="flex items-center gap-1.5 font-bold text-[#F5F5F5] text-xs">
+                        <ListChecks className="w-3.5 h-3.5 text-[#777D87]" />
                         <span>Recommended Maintainer Review Actions</span>
                       </div>
-                      <ul className="space-y-1 text-slate-600 text-[11px]">
+                      <ul className="space-y-1 text-[#B0B3BA] text-[11px]">
                         {authorAiData.investigation_checklist.map((item, idx) => (
                           <li key={idx} className="flex items-start gap-1.5">
-                            <span className="text-indigo-600 font-bold shrink-0">{idx + 1}.</span>
+                            <span className="text-[#B0B3BA] font-bold shrink-0">{idx + 1}.</span>
                             <span>{item}</span>
                           </li>
                         ))}
@@ -1246,13 +1253,13 @@ export default function ProjectsView() {
             </div>
 
             {/* Footer */}
-            <div className="bg-[#FAF9F5] px-5 py-3 border-t border-[#E8E6DF] flex items-center justify-between shrink-0">
+            <div className="bg-[#111318] px-5 py-3 border-t border-[#2B2E35] flex items-center justify-between shrink-0">
               <button
                 onClick={() => handleInspectAuthor(inspectingAuthor, peeringProj?.id)}
                 disabled={authorAiLoading}
                 className="mg-btn-secondary text-xs py-1 px-2.5 flex items-center gap-1.5"
               >
-                <RefreshCw className={`w-3.5 h-3.5 text-indigo-600 ${authorAiLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${authorAiLoading ? 'animate-spin text-[#D69B45]' : 'text-[#777D87]'}`} />
                 <span>Re-run GPT Check</span>
               </button>
               <button

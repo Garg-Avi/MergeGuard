@@ -10,12 +10,11 @@ import {
   RefreshCw,
   Plus,
   Users,
-  ChevronRight,
   ExternalLink,
   Flame,
 } from 'lucide-react';
 import GithubIcon from '../components/GithubIcon';
-import { TRUST_STATUSES, getTrustStatusInfo } from '../utils/statusHelpers';
+import { TRUST_STATUSES } from '../utils/statusHelpers';
 
 export default function OverviewView({ onNavigate }) {
   const [data, setData] = useState(null);
@@ -57,16 +56,16 @@ export default function OverviewView({ onNavigate }) {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="mg-skeleton h-24 w-full rounded-2xl" />
-        <div className="mg-skeleton h-40 w-full rounded-2xl" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="mg-skeleton h-32 rounded-2xl" />
-          <div className="mg-skeleton h-32 rounded-2xl" />
-          <div className="mg-skeleton h-32 rounded-2xl" />
-          <div className="mg-skeleton h-32 rounded-2xl" />
+      <div className="space-y-5 animate-fade-in">
+        <div className="h-16 w-full rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div className="h-24 rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
+          <div className="h-24 rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
+          <div className="h-24 rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
+          <div className="h-24 rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
         </div>
-        <div className="mg-skeleton h-64 rounded-2xl" />
+        <div className="h-48 rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
+        <div className="h-64 rounded-xl bg-[#17191F] border border-[#2B2E35] animate-pulse" />
       </div>
     );
   }
@@ -89,227 +88,201 @@ export default function OverviewView({ onNavigate }) {
   const needsReviewCount = dist.UNDER_REVIEW || reviewContributors.length || 0;
 
   return (
-    <div className="space-y-8 animate-fade-in-up font-sans">
-      {/* 1. WELCOME TO MERGEGUARD HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E6DF]">
+    <div className="space-y-6 animate-fade-in-up font-sans">
+      {/* 1. COMPACT DASHBOARD HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-4 border-b border-[#2B2E35]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
-            <span className="text-xs font-semibold text-indigo-700 tracking-wide uppercase font-mono">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#202329] border border-[#2B2E35] text-[11px] font-mono text-[#B0B3BA] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D69B45] animate-pulse" />
               Pull Request Trust Intelligence
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-1">
-            Welcome to MergeGuard
+          <h1 className="text-xl sm:text-2xl font-bold text-[#F5F5F5] tracking-tight mt-1">
+            Dashboard Overview
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
-            See who is contributing to your code, review recommendations, and keep your pull request queue safe.
+          <p className="text-xs text-[#B0B3BA] mt-0.5">
+            Monitor incoming pull requests, contributor reputation status, and coordinated activity across connected repositories.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           <button
             onClick={() => onNavigate('projects')}
-            className="mg-btn-primary text-xs shadow-xs"
+            className="mg-btn-primary text-xs px-3.5 py-2"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Connect Repository</span>
           </button>
           <button
             onClick={() => onNavigate('vouches')}
-            className="mg-btn-secondary text-xs"
+            className="mg-btn-secondary text-xs px-3.5 py-2"
           >
             <span>Recommend Contributor</span>
           </button>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="p-2.5 rounded-xl border border-[#DDD9CE] bg-white text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors shadow-xs"
-            title="Refresh dashboard"
+            className="p-2 rounded-xl border border-[#2B2E35] bg-[#17191F] text-[#B0B3BA] hover:text-[#F5F5F5] hover:bg-[#202329] transition-colors shadow-xs"
+            title="Refresh dashboard metrics"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-indigo-600' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-[#D69B45]' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* 2. CONNECT YOUR REPOSITORY — MOST OBVIOUS STARTING ACTION */}
-      <div className="mg-card p-6 bg-gradient-to-r from-indigo-50/80 via-white to-violet-50/50 border-indigo-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1.5 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[11px] font-semibold">
-            <GithubIcon className="w-3.5 h-3.5 text-indigo-700" />
-            <span>Quick Start</span>
-          </div>
-          <h2 className="text-lg font-bold text-slate-900">
-            Connect Your Repository
-          </h2>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Connect a public or private GitHub repository to check incoming pull requests and contributor reputations automatically. First-time contributors are welcomed with an open baseline.
-          </p>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            onClick={() => onNavigate('projects')}
-            className="mg-btn-primary text-xs px-5 py-2.5 shadow-sm"
-          >
-            <GithubIcon className="w-4 h-4 text-white" />
-            <span>Connect GitHub Repository</span>
-          </button>
-          <button
-            onClick={() => onNavigate('network')}
-            className="mg-btn-secondary text-xs px-4 py-2.5"
-          >
-            <span>Explore Trust Network</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 3. KEY METRICS ROW */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. COMPACT, REFINED STATISTIC CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Your Repositories */}
         <div
           onClick={() => onNavigate('projects')}
-          className="mg-card p-5 bg-white cursor-pointer hover:border-indigo-300 transition-all shadow-xs group"
+          className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] cursor-pointer hover:border-[#383C45] transition-all shadow-xs group rounded-xl"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Your Repositories
+            <span className="text-[11px] font-bold text-[#777D87] uppercase tracking-wider">
+              Connected Repositories
             </span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <FolderGit2 className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-[#202329] border border-[#2B2E35] text-[#777D87] flex items-center justify-center group-hover:scale-105 transition-transform">
+              <FolderGit2 className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 mt-2">
+          <div className="text-2xl font-extrabold text-[#F5F5F5] mt-1.5 tracking-tight font-mono">
             {metrics.connected_projects || projects.length}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Connected repositories under surveillance
+          <p className="text-[11px] text-[#B0B3BA] mt-0.5 truncate">
+            Active repositories monitored
           </p>
         </div>
 
-        {/* Your Contributors */}
+        {/* Tracked Contributors */}
         <div
           onClick={() => onNavigate('contributors')}
-          className="mg-card p-5 bg-white cursor-pointer hover:border-indigo-300 transition-all shadow-xs group"
+          className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] cursor-pointer hover:border-[#383C45] transition-all shadow-xs group rounded-xl"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Your Contributors
+            <span className="text-[11px] font-bold text-[#777D87] uppercase tracking-wider">
+              Tracked Contributors
             </span>
-            <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Users className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-[#202329] border border-[#2B2E35] text-[#777D87] flex items-center justify-center group-hover:scale-105 transition-transform">
+              <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 mt-2">
+          <div className="text-2xl font-extrabold text-[#F5F5F5] mt-1.5 tracking-tight font-mono">
             {totalContributors}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            {trustedCount} Trusted &bull; {newCount} New
+          <p className="text-[11px] text-[#B0B3BA] mt-0.5">
+            <span className="text-emerald-400 font-semibold">{trustedCount}</span> Trusted &bull; <span className="text-[#B0B3BA] font-semibold">{newCount}</span> Newcomers
           </p>
         </div>
 
         {/* Contributors Needing Review */}
         <div
           onClick={() => onNavigate('contributors')}
-          className="mg-card p-5 bg-white cursor-pointer hover:border-amber-300 transition-all shadow-xs group"
+          className={`mg-card p-4 bg-[#17191F] border cursor-pointer transition-all shadow-xs group rounded-xl ${
+            needsReviewCount > 0 ? 'border-amber-700/60 hover:border-amber-500' : 'border-[#2B2E35] hover:border-[#383C45]'
+          }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Contributors Needing Review
+            <span className="text-[11px] font-bold text-[#777D87] uppercase tracking-wider">
+              Requiring Triage
             </span>
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform ${
-              needsReviewCount > 0 ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-500'
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform ${
+              needsReviewCount > 0 ? 'bg-amber-950/70 border border-amber-800/60 text-[#D69B45]' : 'bg-[#202329] border border-[#2B2E35] text-[#777D87]'
             }`}>
-              <AlertTriangle className="w-4 h-4" />
+              <AlertTriangle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className={`text-3xl font-extrabold mt-2 ${needsReviewCount > 0 ? 'text-amber-700' : 'text-slate-900'}`}>
+          <div className={`text-2xl font-extrabold mt-1.5 tracking-tight font-mono ${
+            needsReviewCount > 0 ? 'text-[#D69B45]' : 'text-[#F5F5F5]'
+          }`}>
             {needsReviewCount}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            {needsReviewCount > 0 ? 'Requires maintainer triage' : 'All contributors in good standing'}
+          <p className="text-[11px] text-[#B0B3BA] mt-0.5 truncate">
+            {needsReviewCount > 0 ? 'Pending maintainer investigation' : 'All contributors in good standing'}
           </p>
         </div>
 
         {/* Verified Recommendations */}
         <div
           onClick={() => onNavigate('vouches')}
-          className="mg-card p-5 bg-white cursor-pointer hover:border-emerald-300 transition-all shadow-xs group"
+          className="mg-card p-4 bg-[#17191F] border border-[#2B2E35] cursor-pointer hover:border-[#383C45] transition-all shadow-xs group rounded-xl"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Verified Recommendations
+            <span className="text-[11px] font-bold text-[#777D87] uppercase tracking-wider">
+              Verified Vouches
             </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <CheckCircle2 className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-[#202329] border border-[#2B2E35] text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 mt-2">
+          <div className="text-2xl font-extrabold text-[#F5F5F5] mt-1.5 tracking-tight font-mono">
             {metrics.active_vouches || 0}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">
+          <p className="text-[11px] text-[#B0B3BA] mt-0.5 truncate">
             Peer recommendations backed by PRs
           </p>
         </div>
       </div>
 
-      {/* 4. SECURITY ALERTS SECTION */}
-      <div className="space-y-3">
+      {/* 3. SECURITY ALERTS SECTION */}
+      <div className="mg-card p-4 sm:p-5 bg-[#17191F] border border-[#2B2E35] rounded-xl space-y-3.5">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Flame className="w-5 h-5 text-rose-600" />
-              <span>Security Alerts</span>
+            <h2 className="text-sm sm:text-base font-bold text-[#F5F5F5] flex items-center gap-2">
+              <Flame className="w-4 h-4 text-rose-400" />
+              <span>Security &amp; Bot Campaign Radar</span>
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Find unusual activity across repositories, such as synchronized bot pull requests.
+            <p className="text-xs text-[#B0B3BA] mt-0.5">
+              Real-time heuristic cluster analysis for bot swarms, synchronized PR spikes, and spam templates.
             </p>
           </div>
           <button
             onClick={() => onNavigate('campaigns')}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+            className="text-xs font-medium text-[#B0B3BA] hover:text-[#F5F5F5] inline-flex items-center gap-1"
           >
-            View all alerts &rarr;
+            <span>View Radar</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {campaigns.length === 0 ? (
-          <div className="mg-card p-6 bg-white flex items-center justify-between gap-4 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#202329] border border-[#2B2E35] flex items-center justify-between gap-4 text-xs">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-950/70 border border-emerald-800/60 text-emerald-400 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <span className="font-bold text-slate-900 block text-sm">No security alerts detected</span>
-                <span className="text-slate-500">All connected repositories have normal, organic contribution activity.</span>
+                <span className="font-semibold text-[#F5F5F5] block text-xs">No active coordinated campaigns detected</span>
+                <span className="text-[11px] text-[#B0B3BA]">Connected repositories exhibit organic, legitimate pull request patterns.</span>
               </div>
             </div>
             <button
               onClick={() => onNavigate('campaigns')}
-              className="mg-btn-secondary text-xs shrink-0"
+              className="mg-btn-secondary text-xs py-1.5 px-3 shrink-0"
             >
               Scan Now
             </button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {campaigns.map((cmp) => (
               <div
                 key={cmp.id}
-                className="mg-card p-5 bg-white border-amber-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+                className="p-3.5 rounded-lg bg-[#202329] border border-amber-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-100 text-amber-800">
-                      Unusual Activity Cluster
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-950/80 border border-amber-800/70 text-[#D69B45]">
+                      Coordinated Activity
                     </span>
-                    <span className="text-xs font-bold text-slate-900">
+                    <span className="font-bold text-[#F5F5F5]">
                       {cmp.name}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
+                  <p className="text-[11px] text-[#B0B3BA] leading-relaxed max-w-2xl">
                     {cmp.description || 'Multiple pull requests with identical patterns submitted across repositories in a short time.'}
                   </p>
-                  <div className="text-[11px] text-slate-500 font-mono flex items-center gap-3 pt-1">
+                  <div className="text-[10px] text-[#777D87] font-mono flex items-center gap-2 pt-0.5">
                     <span>Pattern: {cmp.pattern_type || 'Automated PR Template'}</span>
                     <span>&bull;</span>
                     <span>Similarity: {Math.round((cmp.signal_strength || 0.85) * 100)}%</span>
@@ -317,7 +290,7 @@ export default function OverviewView({ onNavigate }) {
                 </div>
                 <button
                   onClick={() => onNavigate('campaigns')}
-                  className="mg-btn-secondary text-xs shrink-0 border-amber-300 text-amber-900 hover:bg-amber-50"
+                  className="mg-btn-secondary text-xs shrink-0 border-amber-700/60 text-[#D69B45] hover:bg-amber-950/50 py-1.5 px-3"
                 >
                   Review Alert &rarr;
                 </button>
@@ -327,144 +300,146 @@ export default function OverviewView({ onNavigate }) {
         )}
       </div>
 
-      {/* 5. YOUR CONTRIBUTORS & TRUST STATUSES */}
-      <div className="mg-card p-6 bg-white space-y-5 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E8E6DF]">
+      {/* 4. REPUTATION DISTRIBUTION & TRUST POLICIES */}
+      <div className="mg-card p-4 sm:p-5 bg-[#17191F] border border-[#2B2E35] rounded-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#242730]">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Users className="w-5 h-5 text-indigo-600" />
-              <span>Your Contributors &amp; Trust Statuses</span>
+            <h2 className="text-sm sm:text-base font-bold text-[#F5F5F5] flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#777D87]" />
+              <span>Contributor Reputation States</span>
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Every contributor receives an explainable trust status based on verified work. First-time contributors are never assumed suspicious.
+            <p className="text-xs text-[#B0B3BA] mt-0.5">
+              Explainable contributor states verified by peer vouches. First-time contributors start with neutral baselines.
             </p>
           </div>
           <button
             onClick={() => onNavigate('contributors')}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+            className="text-xs font-medium text-[#B0B3BA] hover:text-[#F5F5F5] inline-flex items-center gap-1 self-start sm:self-auto"
           >
-            View Contributor Directory &rarr;
+            <span>Contributor Directory</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Trust Status Explanation Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           {/* Trusted */}
-          <div className="p-3.5 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-1">
+          <div className="p-3 rounded-lg bg-[#202329] border border-[#2B2E35] space-y-1">
             <div className="flex items-center justify-between">
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${TRUST_STATUSES.ESTABLISHED.badgeClass}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${TRUST_STATUSES.ESTABLISHED.badgeClass}`}>
                 {TRUST_STATUSES.ESTABLISHED.label}
               </span>
-              <span className="font-bold text-slate-900 text-sm">{trustedCount}</span>
+              <span className="font-mono font-bold text-[#F5F5F5] text-sm">{trustedCount}</span>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+            <p className="text-[11px] text-[#B0B3BA] leading-relaxed pt-1">
               {TRUST_STATUSES.ESTABLISHED.description}
             </p>
           </div>
 
           {/* New */}
-          <div className="p-3.5 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-1">
+          <div className="p-3 rounded-lg bg-[#202329] border border-[#2B2E35] space-y-1">
             <div className="flex items-center justify-between">
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${TRUST_STATUSES.NEWCOMER.badgeClass}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${TRUST_STATUSES.NEWCOMER.badgeClass}`}>
                 {TRUST_STATUSES.NEWCOMER.label}
               </span>
-              <span className="font-bold text-slate-900 text-sm">{newCount}</span>
+              <span className="font-mono font-bold text-[#F5F5F5] text-sm">{newCount}</span>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+            <p className="text-[11px] text-[#B0B3BA] leading-relaxed pt-1">
               {TRUST_STATUSES.NEWCOMER.description}
             </p>
           </div>
 
           {/* Building Reputation */}
-          <div className="p-3.5 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-1">
+          <div className="p-3 rounded-lg bg-[#202329] border border-[#2B2E35] space-y-1">
             <div className="flex items-center justify-between">
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${TRUST_STATUSES['INSUFFICIENT EVIDENCE'].badgeClass}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${TRUST_STATUSES['INSUFFICIENT EVIDENCE'].badgeClass}`}>
                 {TRUST_STATUSES['INSUFFICIENT EVIDENCE'].label}
               </span>
-              <span className="font-bold text-slate-900 text-sm">{buildingCount}</span>
+              <span className="font-mono font-bold text-[#F5F5F5] text-sm">{buildingCount}</span>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+            <p className="text-[11px] text-[#B0B3BA] leading-relaxed pt-1">
               {TRUST_STATUSES['INSUFFICIENT EVIDENCE'].description}
             </p>
           </div>
 
           {/* Needs Review */}
-          <div className="p-3.5 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] space-y-1">
+          <div className="p-3 rounded-lg bg-[#202329] border border-[#2B2E35] space-y-1">
             <div className="flex items-center justify-between">
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${TRUST_STATUSES['UNDER REVIEW'].badgeClass}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${TRUST_STATUSES['UNDER REVIEW'].badgeClass}`}>
                 {TRUST_STATUSES['UNDER REVIEW'].label}
               </span>
-              <span className="font-bold text-slate-900 text-sm">{needsReviewCount}</span>
+              <span className="font-mono font-bold text-[#F5F5F5] text-sm">{needsReviewCount}</span>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+            <p className="text-[11px] text-[#B0B3BA] leading-relaxed pt-1">
               {TRUST_STATUSES['UNDER REVIEW'].description}
             </p>
           </div>
         </div>
       </div>
 
-      {/* 6. RECENT ACTIVITY SECTION */}
-      <div className="mg-card p-6 bg-white space-y-4 shadow-xs">
-        <div className="flex items-center justify-between pb-4 border-b border-[#E8E6DF]">
+      {/* 5. RECENT ACTIVITY SECTION */}
+      <div className="mg-card p-4 sm:p-5 bg-[#17191F] border border-[#2B2E35] rounded-xl space-y-3.5">
+        <div className="flex items-center justify-between pb-3 border-b border-[#242730]">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-indigo-600" />
-              <span>Recent Activity</span>
+            <h2 className="text-sm sm:text-base font-bold text-[#F5F5F5] flex items-center gap-2">
+              <Activity className="w-4 h-4 text-[#777D87]" />
+              <span>Recent Activity Feed</span>
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Recommendations, pull request checks, and contributor events across your repositories.
+            <p className="text-xs text-[#B0B3BA] mt-0.5">
+              Verified vouches, incident reports, and pull request audits across your repository network.
             </p>
           </div>
           <button
             onClick={() => onNavigate('admin')}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+            className="text-xs font-medium text-[#B0B3BA] hover:text-[#F5F5F5] inline-flex items-center gap-1"
           >
-            System Activity Log &rarr;
+            <span>System Audit Log</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {recentActivity.length === 0 ? (
-          <div className="py-12 text-center text-xs text-slate-400 space-y-2">
-            <Activity className="w-8 h-8 text-slate-300 mx-auto" />
-            <p>No recent activity yet. Connect a repository or recommend a contributor to start tracking.</p>
+          <div className="py-8 text-center text-xs text-[#777D87] space-y-1">
+            <Activity className="w-6 h-6 text-[#777D87]/60 mx-auto" />
+            <p>No recent activity events recorded yet. Connect a repository to begin monitoring.</p>
           </div>
         ) : (
-          <div className="divide-y divide-[#E8E6DF]">
+          <div className="divide-y divide-[#242730]">
             {recentActivity.slice(0, 5).map((item) => (
               <div
                 key={item.id}
-                className="py-3 flex items-start justify-between gap-4 text-xs hover:bg-[#FAF9F5] px-2 rounded-xl transition-colors"
+                className="py-2.5 flex items-start justify-between gap-3 text-xs hover:bg-[#202329] px-2 rounded-lg transition-colors"
               >
-                <div className="flex items-start gap-3 min-w-0">
+                <div className="flex items-start gap-2.5 min-w-0">
                   <span className="mt-0.5 shrink-0">
                     {item.type === 'vouch' ? (
-                      <div className="w-6 h-6 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      <div className="w-5 h-5 rounded-md bg-emerald-950/70 border border-emerald-800/60 flex items-center justify-center text-emerald-400">
+                        <CheckCircle2 className="w-3 h-3" />
                       </div>
                     ) : item.type === 'denouncement' ? (
-                      <div className="w-6 h-6 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-                        <AlertTriangle className="w-3.5 h-3.5" />
+                      <div className="w-5 h-5 rounded-md bg-amber-950/70 border border-amber-800/60 flex items-center justify-center text-[#D69B45]">
+                        <AlertTriangle className="w-3 h-3" />
                       </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
+                      <div className="w-5 h-5 rounded-md bg-[#202329] border border-[#2B2E35] flex items-center justify-center text-[#B0B3BA]">
                         <Shield className="w-3.5 h-3.5" />
                       </div>
                     )}
                   </span>
                   <div className="min-w-0">
-                    <div className="font-semibold text-slate-900 truncate">
+                    <div className="font-semibold text-[#F5F5F5] truncate">
                       {item.description || item.reason || 'Repository Activity Event'}
                     </div>
-                    <div className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
+                    <div className="text-[11px] text-[#B0B3BA] flex items-center gap-2 mt-0.5 flex-wrap">
                       {item.project_name && (
-                        <span className="font-mono text-indigo-600 font-medium">{item.project_name}</span>
+                        <span className="font-mono text-[#F5F5F5] font-medium">{item.project_name}</span>
                       )}
                       {item.contributor && <span>&bull; @{item.contributor}</span>}
                     </div>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-400 font-mono shrink-0 whitespace-nowrap">
+                <div className="text-[10px] text-[#777D87] font-mono shrink-0 whitespace-nowrap">
                   {item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'recently'}
                 </div>
               </div>

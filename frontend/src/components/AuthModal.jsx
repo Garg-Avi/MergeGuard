@@ -121,33 +121,33 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in-up font-sans">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#E8E6DF] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in-up font-sans">
+      <div className="w-full max-w-md bg-[#17191F] text-[#F5F5F5] rounded-2xl shadow-2xl border border-[#2B2E35] overflow-hidden">
         {/* Modal Header */}
-        <div className="bg-[#FAF9F5] px-6 py-4 border-b border-[#E8E6DF] flex items-center justify-between">
+        <div className="bg-[#111318] px-6 py-4 border-b border-[#2B2E35] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-[#202329] border border-[#2B2E35] flex items-center justify-center text-[#D69B45] shadow-xs">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-semibold text-sm text-slate-900">
+              <h3 className="font-semibold text-sm text-[#F5F5F5]">
                 {mode === 'signin' && 'Sign in to MergeGuard'}
                 {mode === 'register' && 'Create Contributor Account'}
                 {mode === 'admin_key' && 'Enter Admin Master Key'}
               </h3>
-              <p className="text-[11px] text-slate-500">Security & Trust Intelligence</p>
+              <p className="text-[11px] text-[#777D87]">Security & Trust Intelligence</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-lg text-[#777D87] hover:text-[#F5F5F5] hover:bg-[#202329] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex p-1.5 mx-6 mt-4 bg-[#F4F3EE] rounded-xl text-xs font-medium">
+        <div className="flex p-1.5 mx-6 mt-4 bg-[#111318] border border-[#2B2E35] rounded-xl text-xs font-medium">
           <button
             onClick={() => {
               setMode('signin');
@@ -155,8 +155,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             }}
             className={`flex-1 py-1.5 rounded-lg transition-all ${
               mode === 'signin'
-                ? 'bg-white text-indigo-700 shadow-xs font-semibold'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#202329] text-[#F5F5F5] shadow-xs font-semibold'
+                : 'text-[#B0B3BA] hover:text-[#F5F5F5]'
             }`}
           >
             Sign In
@@ -168,8 +168,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             }}
             className={`flex-1 py-1.5 rounded-lg transition-all ${
               mode === 'register'
-                ? 'bg-white text-indigo-700 shadow-xs font-semibold'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#202329] text-[#F5F5F5] shadow-xs font-semibold'
+                : 'text-[#B0B3BA] hover:text-[#F5F5F5]'
             }`}
           >
             Register
@@ -181,8 +181,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             }}
             className={`flex-1 py-1.5 rounded-lg transition-all ${
               mode === 'admin_key'
-                ? 'bg-white text-indigo-700 shadow-xs font-semibold'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#202329] text-[#F5F5F5] shadow-xs font-semibold'
+                : 'text-[#B0B3BA] hover:text-[#F5F5F5]'
             }`}
           >
             Admin Key
@@ -192,15 +192,15 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
         {/* Content Body */}
         <div className="p-6 space-y-4">
           {error && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" />
+            <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
               <span>{error}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+            <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -209,36 +209,36 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           {mode === 'signin' && (
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Email address</label>
+                <label className="block text-xs font-medium text-[#B0B3BA] mb-1.5">Email address</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="mg-input pl-9"
+                    className="mg-input pl-9 bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Password</label>
+                <label className="block text-xs font-medium text-[#B0B3BA] mb-1.5">Password</label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="mg-input pl-9 pr-9"
+                    className="mg-input pl-9 pr-9 bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#777D87] hover:text-[#F5F5F5]"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -259,38 +259,38 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           {mode === 'register' && (
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Full name (optional)</label>
+                <label className="block text-xs font-medium text-[#B0B3BA] mb-1.5">Full name (optional)</label>
                 <div className="relative">
-                  <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Alex Chen"
-                    className="mg-input pl-9"
+                    className="mg-input pl-9 bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Email address</label>
+                <label className="block text-xs font-medium text-[#B0B3BA] mb-1.5">Email address</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="maintainer@example.com"
-                    className="mg-input pl-9"
+                    className="mg-input pl-9 bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Password</label>
+                <label className="block text-xs font-medium text-[#B0B3BA] mb-1.5">Password</label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
@@ -298,27 +298,27 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="At least 6 characters"
-                    className="mg-input pl-9 pr-9"
+                    className="mg-input pl-9 pr-9 bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#777D87] hover:text-[#F5F5F5]"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 pt-1 text-xs text-slate-600">
+              <div className="flex items-start gap-2.5 pt-1 text-xs text-[#B0B3BA]">
                 <input
                   type="checkbox"
                   id="privacy"
                   checked={agreedPrivacy}
                   onChange={(e) => setAgreedPrivacy(e.target.checked)}
-                  className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  className="mt-0.5 rounded border-[#2B2E35] bg-[#111318] text-[#D69B45] focus:ring-[#D69B45]"
                 />
-                <label htmlFor="privacy" className="cursor-pointer leading-tight text-slate-600">
+                <label htmlFor="privacy" className="cursor-pointer leading-tight text-[#B0B3BA]">
                   I acknowledge server-side security event logging for repository audit operations.
                 </label>
               </div>
@@ -337,21 +337,21 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           {mode === 'admin_key' && (
             <form onSubmit={handleAdminKeyAuth} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-[#B0B3BA] mb-1">
                   Administrator Secret Key
                 </label>
-                <p className="text-[11px] text-slate-500 mb-2">
-                  Direct administrative authorization via backend <code className="text-indigo-600 font-mono">X-Admin-Key</code> header.
+                <p className="text-[11px] text-[#777D87] mb-2">
+                  Direct administrative authorization via backend <code className="text-[#F5F5F5] font-mono">X-Admin-Key</code> header.
                 </p>
                 <div className="relative">
-                  <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#777D87]" />
                   <input
                     type="password"
                     required
                     value={adminKey}
                     onChange={(e) => setAdminKey(e.target.value)}
                     placeholder="Enter ADMIN_SECRET_KEY..."
-                    className="mg-input pl-9 font-mono text-xs"
+                    className="mg-input pl-9 font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                   />
                 </div>
               </div>
@@ -367,21 +367,21 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           )}
 
           {/* Quick Demo Shortcuts */}
-          <div className="pt-3 border-t border-[#E8E6DF] flex items-center justify-between text-xs text-slate-500">
-            <span className="font-mono text-[11px] text-slate-400">Quick fill:</span>
+          <div className="pt-3 border-t border-[#2B2E35] flex items-center justify-between text-xs text-[#777D87]">
+            <span className="font-mono text-[11px] text-[#777D87]">Quick fill:</span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={fillQuickAdmin}
-                className="text-indigo-600 hover:text-indigo-800 hover:underline font-medium"
+                className="text-[#B0B3BA] hover:text-[#F5F5F5] hover:underline font-medium"
               >
                 Demo Admin
               </button>
-              <span className="text-slate-300">&bull;</span>
+              <span className="text-[#2B2E35]">&bull;</span>
               <button
                 type="button"
                 onClick={fillQuickAdminKey}
-                className="text-indigo-600 hover:text-indigo-800 hover:underline font-medium"
+                className="text-[#B0B3BA] hover:text-[#F5F5F5] hover:underline font-medium"
               >
                 Admin Key
               </button>

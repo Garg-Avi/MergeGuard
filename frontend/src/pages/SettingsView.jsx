@@ -79,47 +79,47 @@ export default function SettingsView({ aiStatus }) {
   return (
     <div className="space-y-6 max-w-4xl animate-fade-in-up font-sans">
       {/* Header */}
-      <div className="pb-6 border-b border-[#E8E6DF]">
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+      <div className="pb-6 border-b border-[#2B2E35]">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
           Settings &amp; Federation
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
+        <p className="text-xs sm:text-sm text-[#B0B3BA] mt-1">
           Export cryptographic trust bundles, peer with external organizations, and manage AI intelligence runtime settings.
         </p>
       </div>
 
       {resetSuccess && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2.5 shadow-xs">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center gap-2.5 shadow-xs">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>Database successfully reset to clean synthetic seed baseline.</span>
         </div>
       )}
 
       {/* AI MODEL RUNTIME CONFIG */}
-      <div className="mg-card p-6 space-y-4 bg-white shadow-xs">
-        <div className="flex items-center gap-2.5 text-sm font-bold text-slate-900">
-          <Cpu className="w-4 h-4 text-indigo-600" />
+      <div className="mg-card p-6 space-y-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+        <div className="flex items-center gap-2.5 text-sm font-bold text-[#F5F5F5]">
+          <Cpu className="w-4 h-4 text-[#777D87]" />
           <span>AI Architecture &amp; Model Runtime</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-          <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF]">
-            <span className="text-slate-400 text-[10px] uppercase block font-sans font-semibold">Configured Model</span>
-            <span className="text-slate-900 text-base font-bold mt-1 block">
+          <div className="p-4 rounded-xl bg-[#202329] border border-[#2B2E35]">
+            <span className="text-[#777D87] text-[10px] uppercase block font-sans font-semibold">Configured Model</span>
+            <span className="text-[#F5F5F5] text-base font-bold mt-1 block">
               {aiStatus?.model_name || 'GPT-OSS-120B'}
             </span>
-            <span className="text-slate-500 text-[11px] mt-0.5 block font-sans">
+            <span className="text-[#777D87] text-[11px] mt-0.5 block font-sans">
               Open-Weight Architecture (Apache 2.0)
             </span>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF]">
-            <span className="text-slate-400 text-[10px] uppercase block font-sans font-semibold">Execution Engine</span>
-            <span className="text-emerald-700 text-base font-bold mt-1 block flex items-center gap-2">
+          <div className="p-4 rounded-xl bg-[#202329] border border-[#2B2E35]">
+            <span className="text-[#777D87] text-[10px] uppercase block font-sans font-semibold">Execution Engine</span>
+            <span className="text-emerald-400 text-base font-bold mt-1 block flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               {aiStatus?.mode || 'Deterministic Engine'}
             </span>
-            <span className="text-slate-500 text-[11px] mt-0.5 block font-sans">
+            <span className="text-[#777D87] text-[11px] mt-0.5 block font-sans">
               {aiStatus?.is_live_configured
                 ? 'Live Groq API Inference Active'
                 : 'Deterministic Fallback Active (Zero Secret Leakage)'}
@@ -127,19 +127,19 @@ export default function SettingsView({ aiStatus }) {
           </div>
         </div>
 
-        <p className="text-xs text-slate-600 leading-relaxed">
+        <p className="text-xs text-[#B0B3BA] leading-relaxed">
           Trust scoring, newcomer neutrality, and policy calculations are evaluated deterministically by the Python FastAPI backend engine.
           The AI model is strictly dedicated to summarizing multi-repository diffs and explaining coordinated patterns to maintainers.
         </p>
       </div>
 
       {/* FEDERATION EXPORT */}
-      <div className="mg-card p-6 space-y-4 bg-white shadow-xs">
-        <div className="flex items-center gap-2.5 text-sm font-bold text-slate-900">
-          <Download className="w-4 h-4 text-indigo-600" />
+      <div className="mg-card p-6 space-y-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+        <div className="flex items-center gap-2.5 text-sm font-bold text-[#F5F5F5]">
+          <Download className="w-4 h-4 text-[#777D87]" />
           <span>Export Repository Trust Bundle</span>
         </div>
-        <p className="text-xs text-slate-600 leading-relaxed">
+        <p className="text-xs text-[#B0B3BA] leading-relaxed">
           Generate an attributable, signed JSON bundle containing your repository's vouches, denouncements, and peering edges to share with partner organizations.
         </p>
 
@@ -147,7 +147,7 @@ export default function SettingsView({ aiStatus }) {
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="mg-input text-xs font-mono sm:w-72"
+            className="mg-input text-xs font-mono sm:w-72 bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
           >
             {projects.map((p) => (
               <option key={p.id} value={p.id}>
@@ -166,17 +166,17 @@ export default function SettingsView({ aiStatus }) {
 
         {exportedJson && (
           <div className="space-y-2 animate-fade-in-up">
-            <div className="flex items-center justify-between text-xs text-slate-500">
+            <div className="flex items-center justify-between text-xs text-[#777D87]">
               <span className="font-mono text-[11px] font-bold">SIGNED FEDERATION JSON PAYLOAD</span>
               <button
                 onClick={handleCopyExport}
-                className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1 font-mono text-[11px]"
+                className="text-[#B0B3BA] hover:text-[#F5F5F5] font-medium flex items-center gap-1 font-mono text-[11px]"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? 'Copied' : 'Copy JSON'}</span>
               </button>
             </div>
-            <pre className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E8E6DF] font-mono text-[11px] text-slate-800 max-h-56 overflow-y-auto">
+            <pre className="p-4 rounded-xl bg-[#111318] border border-[#2B2E35] font-mono text-[11px] text-[#F5F5F5] max-h-56 overflow-y-auto">
               {exportedJson}
             </pre>
           </div>
@@ -184,12 +184,12 @@ export default function SettingsView({ aiStatus }) {
       </div>
 
       {/* FEDERATION IMPORT */}
-      <div className="mg-card p-6 space-y-4 bg-white shadow-xs">
-        <div className="flex items-center gap-2.5 text-sm font-bold text-slate-900">
-          <Upload className="w-4 h-4 text-indigo-600" />
+      <div className="mg-card p-6 space-y-4 bg-[#17191F] border border-[#2B2E35] shadow-xs">
+        <div className="flex items-center gap-2.5 text-sm font-bold text-[#F5F5F5]">
+          <Upload className="w-4 h-4 text-[#777D87]" />
           <span>Import External Peer Bundle</span>
         </div>
-        <p className="text-xs text-slate-600 leading-relaxed">
+        <p className="text-xs text-[#B0B3BA] leading-relaxed">
           Paste a signed federation bundle from an external repository node to merge its trust signals into your local repository network.
         </p>
 
@@ -198,7 +198,7 @@ export default function SettingsView({ aiStatus }) {
           placeholder='{"version": "1.0.0", "source_project": { ... }, "vouches": [ ... ]}'
           value={importJson}
           onChange={(e) => setImportJson(e.target.value)}
-          className="mg-input font-mono text-xs"
+          className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
         />
 
         <div className="flex items-center justify-between">
@@ -209,18 +209,18 @@ export default function SettingsView({ aiStatus }) {
             Import Peer Bundle
           </button>
           {importStatus && (
-            <span className="text-xs font-mono font-medium text-indigo-600">{importStatus}</span>
+            <span className="text-xs font-mono font-medium text-[#F5F5F5]">{importStatus}</span>
           )}
         </div>
       </div>
 
       {/* DANGER ZONE / DEMO RESET */}
-      <div className="mg-card p-6 border-rose-200 bg-white space-y-3.5 shadow-xs">
-        <div className="text-rose-700 font-bold text-sm flex items-center gap-2">
+      <div className="mg-card p-6 border-rose-900/50 bg-[#17191F] space-y-3.5 shadow-xs">
+        <div className="text-rose-400 font-bold text-sm flex items-center gap-2">
           <AlertCircle className="w-4 h-4" />
           <span>Reset Demonstration Database</span>
         </div>
-        <p className="text-xs text-slate-600 leading-relaxed">
+        <p className="text-xs text-[#B0B3BA] leading-relaxed">
           Restore all projects, contributors, vouches, denouncements, and coordinated campaign scenarios back to the clean synthetic demo baseline.
         </p>
         <button

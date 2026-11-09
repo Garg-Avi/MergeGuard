@@ -123,17 +123,17 @@ export default function VouchesView() {
   return (
     <div className="space-y-6 animate-fade-in-up font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E6DF]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#2B2E35]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
               Recommendations
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-semibold font-mono border border-indigo-200/60">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#202329] text-[#B0B3BA] font-semibold font-mono border border-[#2B2E35]">
               {vouches.length}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-xs sm:text-sm text-[#B0B3BA] mt-1">
             Developers can recommend contributors based on verified work.
           </p>
         </div>
@@ -148,12 +148,12 @@ export default function VouchesView() {
       </div>
 
       {successMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between shadow-xs">
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
-            <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{successMsg}</span>
           </div>
-          <button onClick={() => setSuccessMsg('')} className="text-slate-400 hover:text-slate-700">
+          <button onClick={() => setSuccessMsg('')} className="text-[#777D87] hover:text-[#F5F5F5]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -161,19 +161,19 @@ export default function VouchesView() {
 
       {/* Recommendation Form Accordion */}
       {showForm && (
-        <div className="mg-card p-6 bg-white space-y-4 animate-fade-in-up shadow-md">
-          <div className="flex items-center justify-between pb-3.5 border-b border-[#E8E6DF]">
-            <div className="flex items-center gap-2.5 text-xs font-bold text-slate-900">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+        <div className="mg-card p-6 bg-[#17191F] border border-[#2B2E35] space-y-4 animate-fade-in-up shadow-md">
+          <div className="flex items-center justify-between pb-3.5 border-b border-[#242730]">
+            <div className="flex items-center gap-2.5 text-xs font-bold text-[#F5F5F5]">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>Recommend a Contributor</span>
             </div>
-            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-700">
+            <button onClick={() => setShowForm(false)} className="text-[#777D87] hover:text-[#F5F5F5]">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+            <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300">
               {errorMsg}
             </div>
           )}
@@ -181,23 +181,23 @@ export default function VouchesView() {
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1.5">Who are you recommending? (GitHub Username) *</label>
+                <label className="block text-[#B0B3BA] font-semibold mb-1.5">Who are you recommending? (GitHub Username) *</label>
                 <input
                   type="text"
                   required
                   value={formData.contributor_username}
                   onChange={(e) => setFormData({ ...formData, contributor_username: e.target.value })}
                   placeholder="e.g. elena-rustacean"
-                  className="mg-input font-mono text-xs"
+                  className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1.5">Recommending Repository *</label>
+                <label className="block text-[#B0B3BA] font-semibold mb-1.5">Recommending Repository *</label>
                 <select
                   value={formData.source_project_id}
                   onChange={(e) => setFormData({ ...formData, source_project_id: e.target.value })}
-                  className="mg-input text-xs"
+                  className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 >
                   {projects.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -209,33 +209,33 @@ export default function VouchesView() {
             </div>
 
             <div>
-              <label className="block text-slate-700 font-semibold mb-1.5">Pull Request URL (Evidence) *</label>
+              <label className="block text-[#B0B3BA] font-semibold mb-1.5">Pull Request URL (Evidence) *</label>
               <input
                 type="url"
                 required
                 value={formData.evidence_url}
                 onChange={(e) => setFormData({ ...formData, evidence_url: e.target.value })}
                 placeholder="https://github.com/hyperflow-org/hyperflow/pull/412"
-                className="mg-input font-mono text-xs"
+                className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
               />
-              <p className="text-[11px] text-slate-500 mt-1.5">
+              <p className="text-[11px] text-[#777D87] mt-1.5">
                 Link to an accepted pull request that proves their high-quality work.
               </p>
             </div>
 
             <div>
-              <label className="block text-slate-700 font-semibold mb-1.5">Reason for Recommendation *</label>
+              <label className="block text-[#B0B3BA] font-semibold mb-1.5">Reason for Recommendation *</label>
               <textarea
                 rows={3}
                 required
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                 placeholder="e.g. Elena implemented our asynchronous logging engine with clean tests and clear documentation."
-                className="mg-input text-xs"
+                className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
               />
             </div>
 
-            <div className="pt-3 flex justify-end gap-2.5 border-t border-[#E8E6DF]">
+            <div className="pt-3 flex justify-end gap-2.5 border-t border-[#242730]">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
@@ -263,54 +263,54 @@ export default function VouchesView() {
           ))}
         </div>
       ) : vouches.length === 0 ? (
-        <div className="mg-card p-14 text-center text-xs text-slate-500 bg-white">
-          <ShieldCheck className="w-10 h-10 mx-auto text-slate-300 mb-3" />
-          <p className="font-bold text-slate-900 text-sm">No recommendations recorded yet</p>
-          <p className="mt-1 text-slate-500">Developers can recommend contributors based on verified work.</p>
+        <div className="mg-card p-14 text-center text-xs text-[#777D87] bg-[#17191F] border-[#2B2E35]">
+          <ShieldCheck className="w-10 h-10 mx-auto text-[#777D87] mb-3" />
+          <p className="font-bold text-[#F5F5F5] text-sm">No recommendations recorded yet</p>
+          <p className="mt-1 text-[#777D87]">Developers can recommend contributors based on verified work.</p>
         </div>
       ) : (
-        <div className="divide-y divide-[#E8E6DF] border border-[#E8E6DF] rounded-2xl overflow-hidden bg-white shadow-xs">
+        <div className="divide-y divide-[#242730] border border-[#2B2E35] rounded-2xl overflow-hidden bg-[#17191F] shadow-xs">
           {vouches.map((v) => {
             const isExpanded = !!expandedHashes[v.id];
             return (
-              <div key={v.id} className="p-5 text-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4 hover:bg-[#FAF9F5] transition-colors">
+              <div key={v.id} className="p-5 text-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4 hover:bg-[#202329]/60 transition-colors">
                 <div className="space-y-2 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm text-slate-900">
+                    <span className="font-bold text-sm text-[#F5F5F5]">
                       @{v.contributor_username}
                     </span>
-                    <span className="text-slate-500">recommended by</span>
-                    <span className="font-mono text-xs text-indigo-700 font-semibold bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200/50">
+                    <span className="text-[#777D87]">recommended by</span>
+                    <span className="font-mono text-xs text-[#B0B3BA] font-semibold bg-[#202329] px-2.5 py-0.5 rounded-md border border-[#2B2E35]">
                       {v.source_project_name || v.source_project_id}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-800/60">
                       Verified
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-700 leading-relaxed">
+                  <p className="text-xs text-[#B0B3BA] leading-relaxed">
                     {v.reason}
                   </p>
 
-                  <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-1 flex-wrap">
+                  <div className="flex items-center gap-4 text-[11px] text-[#777D87] pt-1 flex-wrap">
                     {v.evidence_url && (
                       <a
                         href={v.evidence_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-indigo-600 hover:underline flex items-center gap-1 font-medium"
+                        className="text-[#B0B3BA] hover:text-[#F5F5F5] hover:underline flex items-center gap-1 font-medium"
                       >
                         <span>View Pull Request Evidence</span>
-                        <ExternalLink className="w-3 h-3" />
+                        <ExternalLink className="w-3 h-3 text-[#B0B3BA]" />
                       </a>
                     )}
 
                     {v.provenance_hash && (
                       <button
                         onClick={() => toggleHash(v.id)}
-                        className="text-slate-500 hover:text-slate-800 flex items-center gap-1 font-mono text-[10px]"
+                        className="text-[#B0B3BA] hover:text-[#F5F5F5] flex items-center gap-1 font-mono text-[10px]"
                       >
-                        <Lock className="w-3 h-3 text-emerald-600" />
+                        <Lock className="w-3 h-3 text-emerald-400" />
                         <span>Provenance Details</span>
                         {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                       </button>
@@ -318,15 +318,15 @@ export default function VouchesView() {
                   </div>
 
                   {isExpanded && v.provenance_hash && (
-                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 font-mono text-[10px] text-slate-600 flex items-center justify-between gap-2 mt-2">
+                    <div className="p-2.5 rounded-lg bg-[#111318] border border-[#2B2E35] font-mono text-[10px] text-[#B0B3BA] flex items-center justify-between gap-2 mt-2">
                       <span className="truncate">Hash: {v.provenance_hash}</span>
                       <button
                         onClick={() => copyHash(v.provenance_hash)}
-                        className="text-slate-400 hover:text-slate-700 shrink-0"
+                        className="text-[#777D87] hover:text-[#F5F5F5] shrink-0"
                         title="Copy hash"
                       >
                         {copiedHash === v.provenance_hash ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
                         ) : (
                           <Copy className="w-3.5 h-3.5" />
                         )}
@@ -335,7 +335,7 @@ export default function VouchesView() {
                   )}
                 </div>
 
-                <div className="text-[11px] text-slate-400 font-mono shrink-0 self-start sm:self-auto">
+                <div className="text-[11px] text-[#777D87] font-mono shrink-0 self-start sm:self-auto">
                   {v.created_at ? new Date(v.created_at).toLocaleDateString() : 'verified'}
                 </div>
               </div>

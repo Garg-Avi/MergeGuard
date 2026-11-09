@@ -115,26 +115,26 @@ export default function DenouncementsView() {
   };
 
   const statusBadges = {
-    'Pending Review': 'bg-amber-50 text-amber-800 border-amber-200',
-    'Under Investigation': 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    Reviewed: 'bg-rose-50 text-rose-700 border-rose-200',
-    Dismissed: 'bg-slate-100 text-slate-500 border-slate-200 line-through',
+    'Pending Review': 'bg-amber-950/60 text-amber-300 border-amber-800/60',
+    'Under Investigation': 'bg-[#202329] text-[#B0B3BA] border-[#2B2E35]',
+    Reviewed: 'bg-rose-950/60 text-rose-300 border-rose-800/60',
+    Dismissed: 'bg-[#202329] text-[#777D87] border-[#2B2E35] line-through',
   };
 
   return (
     <div className="space-y-6 animate-fade-in-up font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E6DF]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#2B2E35]">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
               Reports
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold font-mono border border-rose-200/60">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-950/80 text-rose-300 font-semibold font-mono border border-rose-800/40">
               {denouncements.length}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-xs sm:text-sm text-[#B0B3BA] mt-1">
             Review concerns raised about contributors.
           </p>
         </div>
@@ -149,20 +149,20 @@ export default function DenouncementsView() {
       </div>
 
       {/* Fairness Disclaimer Banner */}
-      <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 flex items-start gap-3 shadow-xs">
-        <ShieldAlert className="w-4 h-4 text-amber-700 mt-0.5 shrink-0" />
+      <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/50 text-xs text-amber-300 flex items-start gap-3 shadow-xs">
+        <ShieldAlert className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
         <div className="leading-relaxed">
           <strong className="font-bold">Fairness First:</strong> Reports are advisory. Contributors are never automatically blocked without maintainer review. All allegations must be backed by verifiable evidence.
         </div>
       </div>
 
       {successMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between shadow-xs">
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-600" />
+            <Check className="w-4 h-4 text-emerald-400" />
             <span>{successMsg}</span>
           </div>
-          <button onClick={() => setSuccessMsg('')} className="text-slate-400 hover:text-slate-700">
+          <button onClick={() => setSuccessMsg('')} className="text-[#777D87] hover:text-[#F5F5F5]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -176,8 +176,8 @@ export default function DenouncementsView() {
             onClick={() => setStatusFilter(tab)}
             className={`px-3 py-1.5 rounded-xl font-medium transition-all shrink-0 ${
               statusFilter === tab
-                ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200/60 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-[#202329] text-[#F5F5F5] font-semibold border border-[#D69B45]/50 shadow-xs'
+                : 'text-[#B0B3BA] hover:text-[#F5F5F5] hover:bg-[#202329]'
             }`}
           >
             {tab === 'ALL' ? 'All Reports' : tab}
@@ -187,19 +187,19 @@ export default function DenouncementsView() {
 
       {/* Report Form Accordion */}
       {showForm && (
-        <div className="mg-card p-6 bg-white space-y-4 animate-fade-in-up shadow-md">
-          <div className="flex items-center justify-between pb-3.5 border-b border-[#E8E6DF]">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
+        <div className="mg-card p-6 bg-[#17191F] border border-[#2B2E35] space-y-4 animate-fade-in-up shadow-md">
+          <div className="flex items-center justify-between pb-3.5 border-b border-[#242730]">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#F5F5F5]">
+              <AlertTriangle className="w-4 h-4 text-amber-400" />
               <span>File a Report (Evidence Required)</span>
             </div>
-            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-700">
+            <button onClick={() => setShowForm(false)} className="text-[#777D87] hover:text-[#F5F5F5]">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+            <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300">
               {errorMsg}
             </div>
           )}
@@ -207,23 +207,23 @@ export default function DenouncementsView() {
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1.5">Reported Contributor (GitHub Username) *</label>
+                <label className="block text-[#B0B3BA] font-semibold mb-1.5">Reported Contributor (GitHub Username) *</label>
                 <input
                   type="text"
                   required
                   value={formData.contributor_username}
                   onChange={(e) => setFormData({ ...formData, contributor_username: e.target.value })}
                   placeholder="e.g. suspicious-user"
-                  className="mg-input font-mono text-xs"
+                  className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1.5">Reporting Repository *</label>
+                <label className="block text-[#B0B3BA] font-semibold mb-1.5">Reporting Repository *</label>
                 <select
                   value={formData.reporting_project_id}
                   onChange={(e) => setFormData({ ...formData, reporting_project_id: e.target.value })}
-                  className="mg-input text-xs"
+                  className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                 >
                   {projects.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -235,44 +235,44 @@ export default function DenouncementsView() {
             </div>
 
             <div>
-              <label className="block text-slate-700 font-semibold mb-1.5">Pull Request or Incident Link (Evidence) *</label>
+              <label className="block text-[#B0B3BA] font-semibold mb-1.5">Pull Request or Incident Link (Evidence) *</label>
               <input
                 type="url"
                 required
                 value={formData.evidence_url}
                 onChange={(e) => setFormData({ ...formData, evidence_url: e.target.value })}
                 placeholder="https://github.com/org/repo/pull/123"
-                className="mg-input font-mono text-xs"
+                className="mg-input font-mono text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
               />
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-[11px] text-[#777D87] mt-1">
                 Link to the pull request, commit, or issue where the concern occurred.
               </p>
             </div>
 
             <div>
-              <label className="block text-slate-700 font-semibold mb-1.5">Reason for Report *</label>
+              <label className="block text-[#B0B3BA] font-semibold mb-1.5">Reason for Report *</label>
               <input
                 type="text"
                 required
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                 placeholder="e.g. Automated AI spam PR copied across multiple repositories"
-                className="mg-input text-xs"
+                className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
               />
             </div>
 
             <div>
-              <label className="block text-slate-700 font-semibold mb-1.5">Additional Details</label>
+              <label className="block text-[#B0B3BA] font-semibold mb-1.5">Additional Details</label>
               <textarea
                 rows={3}
                 value={formData.details}
                 onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                 placeholder="Provide helpful context for maintainers reviewing this report..."
-                className="mg-input text-xs"
+                className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
               />
             </div>
 
-            <div className="pt-3 flex justify-end gap-2.5 border-t border-[#E8E6DF]">
+            <div className="pt-3 flex justify-end gap-2.5 border-t border-[#242730]">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
@@ -300,31 +300,31 @@ export default function DenouncementsView() {
           ))}
         </div>
       ) : denouncements.length === 0 ? (
-        <div className="mg-card p-14 text-center text-xs text-slate-500 bg-white">
-          <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-500 mb-3" />
-          <p className="font-bold text-slate-900 text-sm">No concerns reported</p>
-          <p className="mt-1 text-slate-500">All contributors are in good standing.</p>
+        <div className="mg-card p-14 text-center text-xs text-[#777D87] bg-[#17191F] border-[#2B2E35]">
+          <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-400 mb-3" />
+          <p className="font-bold text-[#F5F5F5] text-sm">No concerns reported</p>
+          <p className="mt-1 text-[#777D87]">All contributors are in good standing.</p>
         </div>
       ) : (
-        <div className="divide-y divide-[#E8E6DF] border border-[#E8E6DF] rounded-2xl overflow-hidden bg-white shadow-xs">
+        <div className="divide-y divide-[#242730] border border-[#2B2E35] rounded-2xl overflow-hidden bg-[#17191F] shadow-xs">
           {denouncements.map((d) => (
-            <div key={d.id} className="p-5 text-xs space-y-3 hover:bg-[#FAF9F5] transition-colors">
+            <div key={d.id} className="p-5 text-xs space-y-3 hover:bg-[#202329]/60 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm text-slate-900">
+                    <span className="font-bold text-sm text-[#F5F5F5]">
                       @{d.contributor_username}
                     </span>
-                    <span className="text-slate-500">reported by</span>
-                    <span className="font-mono text-xs text-indigo-700 font-semibold bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200/50">
+                    <span className="text-[#777D87]">reported by</span>
+                    <span className="font-mono text-xs text-[#B0B3BA] font-semibold bg-[#202329] px-2.5 py-0.5 rounded-md border border-[#2B2E35]">
                       {d.reporting_project_name || d.reporting_project_id}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${statusBadges[d.status] || 'bg-slate-100 text-slate-700'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${statusBadges[d.status] || 'bg-[#202329] text-[#B0B3BA]'}`}>
                       {d.status}
                     </span>
                   </div>
 
-                  <h4 className="font-semibold text-slate-900 text-xs mt-1.5">
+                  <h4 className="font-semibold text-[#F5F5F5] text-xs mt-1.5">
                     {d.reason}
                   </h4>
                 </div>
@@ -340,14 +340,14 @@ export default function DenouncementsView() {
                   >
                     {triagingId === d.id ? 'Close' : 'Review Status'}
                   </button>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-[#777D87] font-mono">
                     {d.created_at ? new Date(d.created_at).toLocaleDateString() : 'recent'}
                   </span>
                 </div>
               </div>
 
               {d.details && (
-                <p className="text-xs text-slate-600 leading-relaxed bg-[#FAF9F5] p-3 rounded-xl border border-[#E8E6DF]/70">
+                <p className="text-xs text-[#B0B3BA] leading-relaxed bg-[#202329] p-3 rounded-xl border border-[#2B2E35]">
                   {d.details}
                 </p>
               )}
@@ -358,29 +358,29 @@ export default function DenouncementsView() {
                     href={d.evidence_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-indigo-600 hover:underline inline-flex items-center gap-1 font-medium text-[11px]"
+                    className="text-[#B0B3BA] hover:text-[#F5F5F5] hover:underline inline-flex items-center gap-1 font-medium text-[11px]"
                   >
                     <span>View Pull Request Evidence</span>
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="w-3 h-3 text-[#B0B3BA]" />
                   </a>
                 </div>
               )}
 
               {/* Triage Accordion */}
               {triagingId === d.id && (
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 animate-fade-in-up mt-2">
+                <div className="p-4 rounded-xl bg-[#202329] border border-[#2B2E35] space-y-3 animate-fade-in-up mt-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Maintainer Triage</span>
-                    <span className="text-[11px] text-slate-500">Update status after investigating</span>
+                    <span className="font-bold text-xs text-[#F5F5F5]">Maintainer Triage</span>
+                    <span className="text-[11px] text-[#777D87]">Update status after investigating</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-700 mb-1">Status</label>
+                      <label className="block text-[11px] font-semibold text-[#B0B3BA] mb-1">Status</label>
                       <select
                         value={triageStatus}
                         onChange={(e) => setTriageStatus(e.target.value)}
-                        className="mg-input text-xs"
+                        className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                       >
                         <option value="Pending Review">Pending Review</option>
                         <option value="Under Investigation">Under Investigation</option>
@@ -390,18 +390,18 @@ export default function DenouncementsView() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-700 mb-1">Review Notes</label>
+                      <label className="block text-[11px] font-semibold text-[#B0B3BA] mb-1">Review Notes</label>
                       <input
                         type="text"
                         value={triageNotes}
                         onChange={(e) => setTriageNotes(e.target.value)}
                         placeholder="Resolution or review summary..."
-                        className="mg-input text-xs"
+                        className="mg-input text-xs bg-[#111318] border-[#2B2E35] text-[#F5F5F5]"
                       />
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+                  <div className="flex justify-end gap-2 pt-2 border-t border-[#242730]">
                     <button
                       onClick={() => setTriagingId(null)}
                       className="mg-btn-secondary text-xs py-1"

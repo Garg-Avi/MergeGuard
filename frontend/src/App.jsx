@@ -83,11 +83,11 @@ export default function App() {
         {currentView === 'overview' && <OverviewView onNavigate={handleNavigate} />}
         {currentView === 'network' && (
           <div className="space-y-6 animate-fade-in-up font-sans">
-            <div className="pb-6 border-b border-[#E8E6DF]">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <div className="pb-6 border-b border-[#2B2E35]">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
                 Interactive Trust Network
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm text-[#B0B3BA] mt-1">
                 Multi-repository topological graph powered by React Flow. Inspect peer endorsements, allegations, and consensus provenance.
               </p>
             </div>
