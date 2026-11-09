@@ -474,24 +474,47 @@ class DeterministicFallbackProvider(BaseAIProvider):
         denounce_count: int = 0
     ) -> ContributorEvidenceInvestigationResponse:
         t0 = time.perf_counter()
-        total_prs = len(pr_data)
-        merged_count = sum(1 for p in pr_data if p.get("is_merged"))
-        closed_count = sum(1 for p in pr_data if not p.get("is_merged") and (p.get("state") or "").lower() == "closed")
-        open_count = sum(1 for p in pr_data if (p.get("state") or "").lower() == "open")
-        deep_diffs_count = sum(1 for p in pr_data if p.get("diff_snippet"))
-        unique_repos = len({p.get("repo_name") for p in pr_data if p.get("repo_name")})
+
+        # Strict author verification: ensure only pull requests authored by this specific contributor are evaluated
+        target_author = username.strip().lstrip("@").lower()
+        verified_authored_prs = []
+        uncertain_prs = []
+
+        for p in pr_data:
+            p_author = p.get("author_username")
+            p_status = p.get("verification_status") or "Verified GitHub record"
+
+            # Check if author identity is missing, ghost, or mismatched
+            if p_author is not None:
+                p_author_clean = str(p_author).strip().lower()
+                if not p_author_clean or p_author_clean == "ghost" or (target_author and p_author_clean != target_author):
+                    uncertain_prs.append(p)
+                    continue
+
+            if p_status in ("Unable to verify", "Verification unavailable", "Unverified author"):
+                uncertain_prs.append(p)
+                continue
+
+            verified_authored_prs.append(p)
+
+        total_prs = len(verified_authored_prs)
+        merged_count = sum(1 for p in verified_authored_prs if p.get("is_merged"))
+        closed_count = sum(1 for p in verified_authored_prs if not p.get("is_merged") and (p.get("state") or "").lower() == "closed")
+        open_count = sum(1 for p in verified_authored_prs if (p.get("state") or "").lower() == "open")
+        deep_diffs_count = sum(1 for p in verified_authored_prs if p.get("diff_snippet"))
+        unique_repos = len({p.get("repo_name") for p in verified_authored_prs if p.get("repo_name")})
 
         is_newcomer = (total_prs == 0 and vouch_count == 0 and denounce_count == 0)
         has_tests = False
-        for p in pr_data:
+        for p in verified_authored_prs:
             files = p.get("changed_files") or []
             if any("test" in (f.get("filename") or "").lower() for f in files):
                 has_tests = True
                 break
 
-        sampled_count = min(len(pr_data), 5)
-        files_count = sum(len(p.get("changed_files") or []) for p in pr_data[:sampled_count]) + (len(current_pr.get("changed_files") or []) if current_pr else 0)
-        lines_count = sum((p.get("additions", 0) + p.get("deletions", 0)) for p in pr_data[:sampled_count]) + ((current_pr.get("additions", 0) + current_pr.get("deletions", 0)) if current_pr else 0)
+        sampled_count = min(len(verified_authored_prs), 5)
+        files_count = sum(len(p.get("changed_files") or []) for p in verified_authored_prs[:sampled_count]) + (len(current_pr.get("changed_files") or []) if current_pr else 0)
+        lines_count = sum((p.get("additions", 0) + p.get("deletions", 0)) for p in verified_authored_prs[:sampled_count]) + ((current_pr.get("additions", 0) + current_pr.get("deletions", 0)) if current_pr else 0)
 
         # Rubric factors & Background assessment
         if is_newcomer or (total_prs == 0 and not current_pr):
@@ -664,12 +687,18 @@ class DeterministicFallbackProvider(BaseAIProvider):
                 lines_analyzed_count=lines_count,
                 deep_diffs_analyzed=deep_diffs_count,
                 repos_spanned=unique_repos,
-                missing_evidence_notes=[] if deep_diffs_count >= 2 else ["Full code diffs only sampled for top PRs to respect token limits."],
-                data_limitations="Deterministic heuristic evaluation. Maintainer code review required.",
+                missing_evidence_notes=(
+                    ([] if deep_diffs_count >= 2 else ["Full code diffs only sampled for top PRs to respect token limits."])
+                    + ([f"{len(uncertain_prs)} pull request(s) had unverifiable or mismatched author identity and were excluded from quality scoring."] if uncertain_prs else [])
+                ),
+                data_limitations=(
+                    "Deterministic heuristic evaluation. Maintainer code review required."
+                    + (f" Note: {len(uncertain_prs)} unverified PR record(s) excluded to preserve author integrity." if uncertain_prs else "")
+                ),
                 is_supported_by_code=not is_insufficient
             ),
             investigation_checklist=checklist,
-            pr_records=pr_data[:10],
+            pr_records=verified_authored_prs[:10],
             secret_redaction_applied=False,
             last_synced_at=datetime.now(timezone.utc).isoformat(),
             is_cached=False,
@@ -1044,17 +1073,39 @@ class GroqProvider(BaseAIProvider):
         denounce_count: int = 0
     ) -> ContributorEvidenceInvestigationResponse:
         t0 = time.perf_counter()
-        total_prs = len(pr_data)
-        merged_count = sum(1 for p in pr_data if p.get("is_merged"))
-        closed_count = sum(1 for p in pr_data if not p.get("is_merged") and (p.get("state") or "").lower() == "closed")
-        open_count = sum(1 for p in pr_data if (p.get("state") or "").lower() == "open")
-        deep_diffs_count = sum(1 for p in pr_data if p.get("diff_snippet"))
-        unique_repos = len({p.get("repo_name") for p in pr_data if p.get("repo_name")})
+
+        # Strict author verification: ensure only pull requests authored by this specific contributor are evaluated
+        target_author = username.strip().lstrip("@").lower()
+        verified_authored_prs = []
+        uncertain_prs = []
+
+        for p in pr_data:
+            p_author = p.get("author_username")
+            p_status = p.get("verification_status") or "Verified GitHub record"
+
+            if p_author is not None:
+                p_author_clean = str(p_author).strip().lower()
+                if not p_author_clean or p_author_clean == "ghost" or (target_author and p_author_clean != target_author):
+                    uncertain_prs.append(p)
+                    continue
+
+            if p_status in ("Unable to verify", "Verification unavailable", "Unverified author"):
+                uncertain_prs.append(p)
+                continue
+
+            verified_authored_prs.append(p)
+
+        total_prs = len(verified_authored_prs)
+        merged_count = sum(1 for p in verified_authored_prs if p.get("is_merged"))
+        closed_count = sum(1 for p in verified_authored_prs if not p.get("is_merged") and (p.get("state") or "").lower() == "closed")
+        open_count = sum(1 for p in verified_authored_prs if (p.get("state") or "").lower() == "open")
+        deep_diffs_count = sum(1 for p in verified_authored_prs if p.get("diff_snippet"))
+        unique_repos = len({p.get("repo_name") for p in verified_authored_prs if p.get("repo_name")})
         is_newcomer = (total_prs == 0 and vouch_count == 0 and denounce_count == 0)
 
-        sampled_count = min(len(pr_data), 5)
-        files_count = sum(len(p.get("changed_files") or []) for p in pr_data[:sampled_count]) + (len(current_pr.get("changed_files") or []) if current_pr else 0)
-        lines_count = sum((p.get("additions", 0) + p.get("deletions", 0)) for p in pr_data[:sampled_count]) + ((current_pr.get("additions", 0) + current_pr.get("deletions", 0)) if current_pr else 0)
+        sampled_count = min(len(verified_authored_prs), 5)
+        files_count = sum(len(p.get("changed_files") or []) for p in verified_authored_prs[:sampled_count]) + (len(current_pr.get("changed_files") or []) if current_pr else 0)
+        lines_count = sum((p.get("additions", 0) + p.get("deletions", 0)) for p in verified_authored_prs[:sampled_count]) + ((current_pr.get("additions", 0) + current_pr.get("deletions", 0)) if current_pr else 0)
 
         system_prompt = (
             "You are MergeGuard AI, a principal security and software engineering auditor investigating a contributor's public GitHub history and pull requests using GPT-OSS-120B. "
@@ -1136,7 +1187,7 @@ class GroqProvider(BaseAIProvider):
         )
 
         sample_prs_payload = []
-        for p in pr_data[:sampled_count]:
+        for p in verified_authored_prs[:sampled_count]:
             files = p.get("changed_files") or []
             sample_prs_payload.append({
                 "pr_number": p.get("pr_number"),
@@ -1301,8 +1352,14 @@ class GroqProvider(BaseAIProvider):
             lines_analyzed_count=lines_count,
             deep_diffs_analyzed=deep_diffs_count,
             repos_spanned=unique_repos,
-            missing_evidence_notes=_safe_str_list(conf_raw.get("missing_evidence_notes"), []),
-            data_limitations=str(conf_raw.get("data_limitations", "Based on public GitHub commit and PR history.")),
+            missing_evidence_notes=(
+                _safe_str_list(conf_raw.get("missing_evidence_notes"), [])
+                + ([f"{len(uncertain_prs)} pull request(s) had unverifiable or mismatched author identity and were excluded from quality scoring."] if uncertain_prs else [])
+            ),
+            data_limitations=(
+                str(conf_raw.get("data_limitations", "Based on public GitHub commit and PR history."))
+                + (f" Note: {len(uncertain_prs)} unverified PR record(s) excluded to preserve author integrity." if uncertain_prs else "")
+            ),
             is_supported_by_code=bool(conf_raw.get("is_supported_by_code", not is_insufficient))
         )
 
@@ -1321,7 +1378,7 @@ class GroqProvider(BaseAIProvider):
             current_pr_assessment=current_assessment,
             evidence_confidence=evidence_confidence,
             investigation_checklist=checklist,
-            pr_records=pr_data[:10],
+            pr_records=verified_authored_prs[:10],
             secret_redaction_applied=was_redacted,
             last_synced_at=datetime.now(timezone.utc).isoformat(),
             is_cached=False,

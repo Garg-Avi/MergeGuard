@@ -55,10 +55,17 @@ def run_migrations(bind_engine):
                     ("review_comments_json", "TEXT DEFAULT '[]'"),
                     ("closure_reason", "TEXT DEFAULT ''"),
                     ("commit_messages_json", "TEXT DEFAULT '[]'"),
+                    ("author_github_id", "VARCHAR(64) DEFAULT ''"),
                 ]
                 for col_name, col_type in pr_col_defs:
                     if col_name not in existing_pr_cols:
                         conn.exec_driver_sql(f"ALTER TABLE github_pull_requests ADD COLUMN {col_name} {col_type};")
+
+            contrib_result = conn.exec_driver_sql("PRAGMA table_info(contributors);")
+            existing_contrib_cols = {row[1] for row in contrib_result.fetchall()}
+            if existing_contrib_cols:
+                if "github_id" not in existing_contrib_cols:
+                    conn.exec_driver_sql("ALTER TABLE contributors ADD COLUMN github_id VARCHAR(64) DEFAULT '';")
 
                 conn.commit()
         except Exception:

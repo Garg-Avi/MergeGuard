@@ -57,6 +57,7 @@ class Contributor(Base):
 
     id = Column(String(64), primary_key=True, index=True)
     username = Column(String(128), unique=True, index=True, nullable=False)
+    github_id = Column(String(64), nullable=True, index=True) # Stable immutable GitHub numeric user ID
     display_name = Column(String(128), default="")
     avatar_url = Column(String(255), default="")
     github_url = Column(String(255), default="")
@@ -196,6 +197,7 @@ class GitHubPullRequest(Base):
     title = Column(String(512), nullable=False)
     description = Column(Text, default="")
     author_username = Column(String(128), nullable=False, index=True)
+    author_github_id = Column(String(64), nullable=True, index=True) # Stable immutable GitHub numeric user ID
     author_avatar_url = Column(String(255), default="")
     state = Column(String(32), default="open", index=True) # "open", "closed", "merged"
     is_merged = Column(Boolean, default=False)

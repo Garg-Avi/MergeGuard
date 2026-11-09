@@ -197,13 +197,21 @@ def investigate_contributor(
     quality investigation using Groq openai/gpt-oss-120b.
     """
     clean_id = req.contributor_id.strip()
+    from sqlalchemy import func
     contrib = db.query(Contributor).filter(
-        (Contributor.id == clean_id) | (Contributor.username == clean_id)
+        (Contributor.id == clean_id)
+        | (func.lower(Contributor.username) == clean_id.lower())
+        | (Contributor.github_id == clean_id)
     ).first()
 
-    username = contrib.username if contrib else clean_id.lstrip("@")
+    # If not matched by ID or username, check display name
+    if not contrib:
+        contrib = db.query(Contributor).filter(Contributor.display_name.ilike(clean_id)).first()
 
-    # Sync full public cross-repository history
+    username = contrib.username if contrib else clean_id.lstrip("@")
+    github_id = contrib.github_id if contrib else None
+
+    # Sync full public cross-repository history strictly for this author
     sync_result = GitHubService.sync_contributor_full_history(
         db=db,
         username=username,
@@ -213,9 +221,11 @@ def investigate_contributor(
     )
 
     from app.models import GitHubPullRequest
-    prs = db.query(GitHubPullRequest).filter(
-        GitHubPullRequest.author_username == username
-    ).order_by(GitHubPullRequest.created_at.desc()).all()
+    gh_filter = (func.lower(GitHubPullRequest.author_username) == username.lower())
+    if github_id:
+        gh_filter = gh_filter | (GitHubPullRequest.author_github_id == github_id)
+
+    prs = db.query(GitHubPullRequest).filter(gh_filter).order_by(GitHubPullRequest.created_at.desc()).all()
 
     pr_list = []
     current_pr_dict = None
@@ -227,6 +237,8 @@ def investigate_contributor(
             "repo_name": p.repo_name or (p.project.name if p.project else "Repository"),
             "title": p.title,
             "description": p.description or "",
+            "author_username": p.author_username,
+            "author_github_id": p.author_github_id or "",
             "state": p.state,
             "is_merged": p.is_merged,
             "merged_at": p.merged_at.isoformat() if p.merged_at else None,
@@ -237,6 +249,7 @@ def investigate_contributor(
             "diff_snippet": p.diff_snippet or "",
             "review_comments": p.review_comments,
             "closure_reason": p.closure_reason or "",
+            "verification_status": p.verification_status,
             "is_external": p.is_external,
             "created_at": p.created_at.isoformat() if p.created_at else None,
         }
@@ -244,9 +257,8 @@ def investigate_contributor(
         if req.current_pr_number and p.pr_number == req.current_pr_number:
             current_pr_dict = p_dict
 
-    if not current_pr_dict and pr_list:
-        open_pr = next((p for p in pr_list if p["state"] == "open"), None)
-        current_pr_dict = open_pr or pr_list[0]
+    # Keep current PR investigation strictly separate from general profile history analysis.
+    # Do not hijack arbitrary historical PRs when no current PR number was requested.
 
     vouch_count = len(contrib.vouches) if contrib and contrib.vouches else 0
     denounce_count = len(contrib.denouncements) if contrib and contrib.denouncements else 0

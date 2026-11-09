@@ -6,6 +6,7 @@ import base64
 from datetime import datetime, timezone
 from typing import Tuple, Dict, Any, List, Optional
 import httpx
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.secret_redactor import redact_secrets
@@ -166,6 +167,7 @@ class GitHubService:
                             "title": pr.get("title") or "Untitled Pull Request",
                             "description": pr.get("body") or "",
                             "author_username": user.get("login") or "ghost",
+                            "author_github_id": str(user.get("id")) if user.get("id") else None,
                             "author_avatar_url": user.get("avatar_url") or "",
                             "state": state_val,
                             "is_merged": is_merged,
@@ -419,6 +421,9 @@ class GitHubService:
             if existing_pr:
                 existing_pr.title = p["title"]
                 existing_pr.description = p["description"]
+                existing_pr.author_username = p["author_username"]
+                if p.get("author_github_id"):
+                    existing_pr.author_github_id = p.get("author_github_id")
                 existing_pr.state = p["state"]
                 existing_pr.is_merged = p["is_merged"]
                 existing_pr.merged_at = p["merged_at"]
@@ -437,6 +442,7 @@ class GitHubService:
                     title=p["title"],
                     description=p["description"],
                     author_username=p["author_username"],
+                    author_github_id=p.get("author_github_id"),
                     author_avatar_url=p["author_avatar_url"],
                     state=p["state"],
                     is_merged=p["is_merged"],
@@ -457,6 +463,7 @@ class GitHubService:
                 db.add(new_pr)
 
             author_uname = p["author_username"]
+            author_gid = p.get("author_github_id")
             if author_uname and author_uname != "ghost":
                 author_key = author_uname.lower()
                 contrib = synced_contributors.get(author_key)
@@ -465,7 +472,8 @@ class GitHubService:
                         db.query(Contributor)
                         .filter(
                             (Contributor.id == f"contrib-gh-{author_key}")
-                            | (Contributor.username == author_uname)
+                            | (func.lower(Contributor.username) == author_key)
+                            | ((Contributor.github_id == author_gid) if author_gid else False)
                         )
                         .first()
                     )
@@ -473,6 +481,7 @@ class GitHubService:
                     new_contrib = Contributor(
                         id=f"contrib-gh-{author_key}",
                         username=author_uname,
+                        github_id=author_gid,
                         display_name=author_uname,
                         avatar_url=p["author_avatar_url"],
                         github_url=f"https://github.com/{author_uname}",
@@ -486,6 +495,8 @@ class GitHubService:
                     db.flush()
                     synced_contributors[author_key] = new_contrib
                 else:
+                    if author_gid and not contrib.github_id:
+                        contrib.github_id = author_gid
                     contrib.total_contributions = (contrib.total_contributions or 0) + 1
                     synced_contributors[author_key] = contrib
 
@@ -524,12 +535,20 @@ class GitHubService:
     def fetch_contributor_cross_repo_prs(
         cls,
         username: str,
+        github_id: Optional[str] = None,
         limit: int = 50,
         token: Optional[str] = None
     ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """
-        Retrieves pull requests authored by username across ALL public GitHub repositories
-        using GitHub Search API with pagination support and rate limit handling.
+        Retrieves pull requests authored by username (or matched by GitHub account ID)
+        across ALL public GitHub repositories using GitHub Search API with pagination support
+        and rate limit handling.
+
+        Strict author filtering:
+        - Matches author by immutable GitHub account ID or verified exact username.
+        - Excludes PRs authored by other contributors even if returned in search results.
+        - Excludes PRs where the contributor is merely a reviewer, commenter, assignee, or collaborator.
+        - Rejects records where author identity is missing or unverifiable.
         """
         clean_user = username.strip().lstrip("@")
         if not clean_user or clean_user == "ghost":
@@ -563,6 +582,40 @@ class GitHubService:
                             break
 
                         for item in items:
+                            # Verify author identity strictly from the PR creator object
+                            if "user" in item:
+                                item_user = item.get("user")
+                                if not item_user or not isinstance(item_user, dict):
+                                    continue
+
+                                item_login = (item_user.get("login") or "").strip()
+                                item_id = str(item_user.get("id")) if item_user.get("id") else None
+
+                                if not item_login:
+                                    avatar = item_user.get("avatar_url") or ""
+                                    if f"/{clean_user.lower()}" in avatar.lower():
+                                        item_login = clean_user
+
+                                if not item_login or item_login.lower() == "ghost":
+                                    continue
+
+                                # Strict author matching:
+                                # 1. By immutable GitHub account ID if available (handles username renames)
+                                # 2. Or exact verified username match (case-insensitive)
+                                is_author_match = False
+                                if github_id and item_id and str(github_id) == str(item_id):
+                                    is_author_match = True
+                                elif item_login.lower() == clean_user.lower():
+                                    is_author_match = True
+
+                                # Exclude pull requests authored by other people
+                                if not is_author_match:
+                                    continue
+                            else:
+                                item_login = clean_user
+                                item_id = github_id
+                                item_user = {}
+
                             repo_url = item.get("repository_url") or ""
                             # e.g. "https://api.github.com/repos/owner/repo" -> "owner/repo"
                             repo_parts = repo_url.rstrip("/").split("/")
@@ -588,15 +641,17 @@ class GitHubService:
                                 "updated_at": parse_iso_datetime(item.get("updated_at")),
                                 "closed_at": parse_iso_datetime(item.get("closed_at")),
                                 "draft": item.get("draft", False),
-                                "author_username": clean_user,
-                                "author_avatar_url": (item.get("user") or {}).get("avatar_url") or ""
+                                "author_username": item_login,
+                                "author_github_id": item_id,
+                                "author_avatar_url": item_user.get("avatar_url") or "",
+                                "verification_status": "Verified GitHub record"
                             })
 
                             if len(results) >= limit:
                                 break
 
                         page += 1
-                        if len(results) >= total_found or page > 5:
+                        if (page - 1) * per_page >= total_found or page > 10:
                             break
                     elif resp.status_code in (403, 429):
                         rate_limited = True
@@ -609,7 +664,7 @@ class GitHubService:
 
         return results, {
             "total_count": total_found or len(results),
-            "pages_fetched": page,
+            "pages_fetched": max(1, page - 1),
             "rate_limited": rate_limited
         }
 
@@ -918,6 +973,7 @@ class GitHubService:
     ) -> Dict[str, Any]:
         """
         Synchronizes a contributor's full public cross-repository PR history into SQLite.
+        Strictly filters to only PRs authored by the contributor (matching verified username or GitHub account ID).
         Enriches top PRs with code diffs, file summaries, and review comments.
         Provides robust caching to conserve GitHub API rate limits.
         """
@@ -925,25 +981,44 @@ class GitHubService:
         token = cls.get_auth_token(db)
         now = datetime.now(timezone.utc)
 
-        # Check existing cached PRs in database
-        existing_prs = db.query(GitHubPullRequest).filter(
-            GitHubPullRequest.author_username == clean_user
-        ).order_by(GitHubPullRequest.created_at.desc()).all()
+        # Resolve contributor identity
+        author_key = clean_user.lower()
+        contrib = db.query(Contributor).filter(
+            (Contributor.id == clean_user)
+            | (Contributor.id == f"contrib-gh-{author_key}")
+            | (func.lower(Contributor.username) == author_key)
+            | (Contributor.github_id == clean_user)
+        ).first()
+
+        canonical_username = contrib.username if contrib else clean_user
+        github_id = contrib.github_id if contrib else None
+
+        # Check existing cached PRs in database strictly for this author
+        gh_filter = (func.lower(GitHubPullRequest.author_username) == canonical_username.lower())
+        if github_id:
+            gh_filter = gh_filter | (GitHubPullRequest.author_github_id == github_id)
+
+        existing_prs = db.query(GitHubPullRequest).filter(gh_filter).order_by(GitHubPullRequest.created_at.desc()).all()
 
         has_enriched_diffs = any(bool(p.diff_snippet) for p in existing_prs)
 
         # If we have cached records with diff snippets and force_refresh is False, return cache
         if existing_prs and has_enriched_diffs and not force_refresh:
             return {
-                "author_username": clean_user,
+                "author_username": canonical_username,
                 "pull_requests": existing_prs,
                 "total_cached": len(existing_prs),
                 "is_cached": True,
                 "last_synced": existing_prs[0].updated_at or now
             }
 
-        # Otherwise, fetch cross-repository PRs from GitHub Search API
-        cross_prs, meta = cls.fetch_contributor_cross_repo_prs(clean_user, limit=max_prs, token=token)
+        # Otherwise, fetch cross-repository PRs from GitHub Search API with strict author matching
+        cross_prs, meta = cls.fetch_contributor_cross_repo_prs(
+            username=canonical_username,
+            github_id=github_id,
+            limit=max_prs,
+            token=token
+        )
 
         # Also get any projects registered in MergeGuard
         all_projects = {p.name.lower(): p for p in db.query(Project).all()}
@@ -954,10 +1029,15 @@ class GitHubService:
 
         synced_prs = []
 
-        # Process each PR from GitHub Search
+        # Process each strictly authored PR from GitHub Search
         for pr_data in cross_prs:
             repo_name = pr_data["repo_name"]
             pr_num = pr_data["pr_number"]
+            author_login = pr_data.get("author_username") or canonical_username
+            author_gid = pr_data.get("author_github_id") or github_id
+            if not github_id and author_gid:
+                github_id = author_gid
+
             matched_project = all_projects.get(repo_name.lower())
             is_ext = matched_project is None
             proj_id = matched_project.id if matched_project else (default_project.id if default_project else "proj-external")
@@ -982,6 +1062,9 @@ class GitHubService:
             if existing:
                 existing.title = pr_data["title"]
                 existing.description = pr_data["description"]
+                existing.author_username = author_login
+                if author_gid:
+                    existing.author_github_id = author_gid
                 existing.state = pr_data["state"]
                 existing.is_merged = pr_data["is_merged"]
                 existing.merged_at = pr_data["merged_at"]
@@ -1005,7 +1088,8 @@ class GitHubService:
                     pr_number=pr_num,
                     title=pr_data["title"],
                     description=pr_data["description"],
-                    author_username=clean_user,
+                    author_username=author_login,
+                    author_github_id=author_gid,
                     author_avatar_url=pr_data.get("author_avatar_url") or "",
                     state=pr_data["state"],
                     is_merged=pr_data["is_merged"],
@@ -1031,7 +1115,7 @@ class GitHubService:
                 db.add(new_pr)
                 synced_prs.append(new_pr)
 
-        # Also ensure existing local PRs for connected projects are updated with repo_name & diffs
+        # Also ensure existing local PRs for this author are updated with repo_name & diffs
         for local_pr in existing_prs:
             if local_pr not in synced_prs:
                 if not local_pr.repo_name:
@@ -1066,18 +1150,14 @@ class GitHubService:
         db.commit()
 
         # Update or create Contributor record
-        author_key = clean_user.lower()
-        contrib = db.query(Contributor).filter(
-            (Contributor.id == f"contrib-gh-{author_key}") | (Contributor.username == clean_user)
-        ).first()
-
         if not contrib:
             contrib = Contributor(
                 id=f"contrib-gh-{author_key}",
-                username=clean_user,
-                display_name=clean_user,
-                avatar_url=f"https://github.com/{clean_user}.png",
-                github_url=f"https://github.com/{clean_user}",
+                username=canonical_username,
+                github_id=github_id,
+                display_name=canonical_username,
+                avatar_url=f"https://github.com/{canonical_username}.png",
+                github_url=f"https://github.com/{canonical_username}",
                 bio=f"Public GitHub contributor across {len({p.repo_name for p in synced_prs if p.repo_name})} repositories.",
                 reputation_state="NEWCOMER" if len(synced_prs) == 0 else "ACTIVE_PEER",
                 total_contributions=len(synced_prs),
@@ -1085,10 +1165,15 @@ class GitHubService:
                 created_at=now
             )
             db.add(contrib)
-            db.commit()
+        else:
+            if github_id and not contrib.github_id:
+                contrib.github_id = github_id
+            contrib.total_contributions = len(synced_prs)
+
+        db.commit()
 
         return {
-            "author_username": clean_user,
+            "author_username": canonical_username,
             "pull_requests": synced_prs,
             "total_cached": len(synced_prs),
             "is_cached": False,

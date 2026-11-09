@@ -112,6 +112,7 @@ class DenouncementOut(BaseModel):
 # --- Contributors ---
 class ContributorBase(BaseModel):
     username: str
+    github_id: Optional[str] = None
     display_name: Optional[str] = ""
     avatar_url: Optional[str] = ""
     github_url: Optional[str] = ""
@@ -243,6 +244,7 @@ class GitHubPullRequestOut(BaseModel):
     title: str
     description: Optional[str] = ""
     author_username: str
+    author_github_id: Optional[str] = None
     author_avatar_url: Optional[str] = ""
     state: str
     is_merged: bool
