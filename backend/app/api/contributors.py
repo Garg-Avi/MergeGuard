@@ -55,7 +55,11 @@ def serialize_contributor(c: Contributor, db: Session, viewing_project_id: Optio
         ))
 
     from app.models import GitHubPullRequest
-    gh_prs = db.query(GitHubPullRequest).filter(GitHubPullRequest.author_username == c.username).all()
+    from sqlalchemy import func
+    gh_filter = (func.lower(GitHubPullRequest.author_username) == c.username.lower())
+    if c.github_id:
+        gh_filter = gh_filter | (GitHubPullRequest.author_github_id == c.github_id)
+    gh_prs = db.query(GitHubPullRequest).filter(gh_filter).all()
     has_real_pr = False
     for pr in gh_prs:
         if not pr.is_synthetic:
@@ -90,6 +94,7 @@ def serialize_contributor(c: Contributor, db: Session, viewing_project_id: Optio
     return ContributorOut(
         id=c.id,
         username=c.username,
+        github_id=c.github_id or "",
         display_name=c.display_name or c.username,
         avatar_url=c.avatar_url or "",
         github_url=c.github_url or f"https://github.com/{c.username}",
@@ -148,8 +153,12 @@ def list_contributors(
 
 @router.get("/{contributor_id}", response_model=ContributorOut)
 def get_contributor(contributor_id: str, db: Session = Depends(get_db)):
+    from sqlalchemy import func
+    cid = contributor_id.strip()
     c = db.query(Contributor).filter(
-        (Contributor.id == contributor_id) | (Contributor.username == contributor_id)
+        (Contributor.id == cid)
+        | (func.lower(Contributor.username) == cid.lower())
+        | (Contributor.github_id == cid)
     ).first()
     if not c:
         raise HTTPException(status_code=404, detail=f"Contributor {contributor_id} not found")
@@ -172,6 +181,7 @@ def create_contributor(data: ContributorCreate, db: Session = Depends(get_db)):
     contrib = Contributor(
         id=cid,
         username=uname,
+        github_id=data.github_id or "",
         display_name=data.display_name.strip() if data.display_name else uname,
         avatar_url=data.avatar_url.strip() if data.avatar_url else f"https://github.com/{uname}.png",
         github_url=data.github_url.strip() if data.github_url else f"https://github.com/{uname}",
@@ -187,8 +197,12 @@ def create_contributor(data: ContributorCreate, db: Session = Depends(get_db)):
 
 @router.get("/{contributor_id}/activity")
 def get_contributor_activity(contributor_id: str, db: Session = Depends(get_db)):
+    from sqlalchemy import func
+    cid = contributor_id.strip()
     c = db.query(Contributor).filter(
-        (Contributor.id == contributor_id) | (Contributor.username == contributor_id)
+        (Contributor.id == cid)
+        | (func.lower(Contributor.username) == cid.lower())
+        | (Contributor.github_id == cid)
     ).first()
     if not c:
         raise HTTPException(status_code=404, detail="Contributor not found")
@@ -219,11 +233,12 @@ def get_contributor_activity(contributor_id: str, db: Session = Depends(get_db))
             "timestamp": d.created_at.isoformat()
         })
 
-    # Verified GitHub Pull Requests
+    # Verified GitHub Pull Requests strictly authored by this contributor
     from app.models import GitHubPullRequest
-    gh_pulls = db.query(GitHubPullRequest).filter(
-        GitHubPullRequest.author_username == c.username
-    ).all()
+    gh_filter = (func.lower(GitHubPullRequest.author_username) == c.username.lower())
+    if c.github_id:
+        gh_filter = gh_filter | (GitHubPullRequest.author_github_id == c.github_id)
+    gh_pulls = db.query(GitHubPullRequest).filter(gh_filter).all()
     for gh in gh_pulls:
         proj = db.query(Project).filter(Project.id == gh.project_id).first()
         events.append({
